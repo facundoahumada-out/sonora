@@ -1,5 +1,7 @@
+import Landing from "./pages/Landing";
+
 function App() {
-  return <h1> Sonora </h1>;
+  return <Landing onStart={() => {}} />;
 }
 
 export default App;
