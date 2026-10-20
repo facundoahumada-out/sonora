@@ -1,7 +1,7 @@
-import Landing from "./pages/Landing";
+import Auth from "./pages/Auth";
 
 function App() {
-  return <Landing onStart={() => {}} />;
+  return <Auth />;
 }
 
 export default App;
