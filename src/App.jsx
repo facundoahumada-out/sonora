@@ -3,6 +3,7 @@ import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import Welcome from "./pages/Welcome";
 import Home from "./pages/Home";
+import Collection from "./pages/Collection"
 
 export default function App() {
   const [pagina, setPagina] = useState('landing')
@@ -36,7 +37,13 @@ export default function App() {
 
   if (pagina === 'home') {
     return (
-      <Home usuario={usuario} esAdmin={esAdmin} onCargar={(tmp) => console.log('Ir a:', tmp)}></Home>
+      <Home usuario={usuario} esAdmin={esAdmin} onCargar={(p) => setPagina(p)}></Home>
+    )
+  }
+
+  if (pagina === 'collection') {
+    return (
+      <Collection usuario={usuario} esAdmin={esAdmin} onCargar={(p) => setPagina(p)}></Collection>
     )
   }
 

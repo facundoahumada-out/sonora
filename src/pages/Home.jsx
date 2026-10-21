@@ -10,7 +10,7 @@ const sections = [
 ]
 
 export default function Home ({ usuario, esAdmin, onCargar }) {
-    const [section, setSections] = useState('parati')
+    const [section, setSection] = useState('parati')
 
     return (
         <div className="min-h-screen bg-white text-sm text-neutral-900">
@@ -18,7 +18,7 @@ export default function Home ({ usuario, esAdmin, onCargar }) {
                 <Logo></Logo>
                 <div className="ml-auto flex items-center gap-5">
                     <button onClick={() => onCargar('home')} className="font-medium">Inicio</button>
-                    <button onClick={() => onCargar('biblioteca')} className="text-neutral-500 hover:text-neutral-900">Biblioteca</button>
+                    <button onClick={() => onCargar('collection')} className="text-neutral-500 hover:text-neutral-900">Biblioteca</button>
                     {esAdmin && (
                         <button onClick={() => onCargar('admin')}className="text-neutral-500 hover:text-neutral-900">Admin</button>
                     )}
@@ -28,7 +28,7 @@ export default function Home ({ usuario, esAdmin, onCargar }) {
                 </div>
             </nav>
 
-            <main className="mx-auto w-full max-w-[620px] px-6 pt-16">
+            <main className="mx-auto w-full max-w-[720px] px-6 pt-16">
                 <h1 className="mb-4 text-2xl font-semibold tracking-tight">Hola, {usuario}</h1>
 
                 <label className="flex h-11 items-center gap-3 rounded-lg border border-neutral-200 px-3">
@@ -44,7 +44,7 @@ export default function Home ({ usuario, esAdmin, onCargar }) {
                             )
                         } else {
                             return (
-                                <button key={tmp.id} onClick={() => setSections(tmp.id)} className="pb-2 text-neutral-400 hover:text-neutral-900">{tmp.name}</button>
+                                <button key={tmp.id} onClick={() => setSection(tmp.id)} className="pb-2 text-neutral-400 hover:text-neutral-900">{tmp.name}</button>
                             )
                         }
                     })}
