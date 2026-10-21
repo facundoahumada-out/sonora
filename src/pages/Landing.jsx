@@ -6,7 +6,7 @@ const funciones = [
   { titulo: 'Continúa', texto: 'Tu última canción te espera cada vez que entras.' }
 ]
 
-export default function Landing( onLogin, onRegister ) {
+export default function Landing( {onLogin, onRegister} ) {
   return (
     <div className="flex min-h-screen flex-col bg-white text-[13px] text-neutral-900">
       <nav className="mx-auto flex h-16 w-full max-w-[880px] items-center px-6">
