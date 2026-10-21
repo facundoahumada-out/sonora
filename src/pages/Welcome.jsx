@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tag, Guitar, Sparkles, Disc3, Zap, Piano, MicVocal, Coffee, Music, Flame, Moon, ArrowRight } from "lucide-react";
 import Logo from "../components/Logo";
 
@@ -17,6 +17,16 @@ const generos = [
 
 export default function Welcome({ usuario, esNuevo, onContinuar }) {
     const [elegidos, setElegidos] = useState([])
+
+    useEffect(() => {
+        if(esNuevo === false) {
+            const temporizador = setTimeout(() => {
+                onContinuar([])
+            }, 2000)
+
+            return () => clearTimeout(temporizador)
+        }
+    }, [])
 
     function alternar(name) {
         if (elegidos.includes(name)) {
@@ -82,10 +92,6 @@ export default function Welcome({ usuario, esNuevo, onContinuar }) {
                     <h1 className="text-6xl font-bold tracking-tighter">Hola,</h1>
                     <span className="rounded-2xl border-2 border-dashed border-blue-500 px-5 py-2 text-2xl font-medium text-blue-600">{usuario}</span>
                 </div>
-
-                <button onClick={() => onContinuar([])} className="mt-10 flex h-8 items-center gap-2 rounded-md bg-neutral-900 px-4 font-medium text-white">
-                Ir a mi música <ArrowRight size={16}></ArrowRight>
-                </button>
             </div>
         )
     }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import Welcome from "./pages/Welcome";
+import Home from "./pages/Home";
 
 export default function App() {
   const [pagina, setPagina] = useState('landing')
@@ -15,15 +16,27 @@ export default function App() {
   }
 
   if (pagina === 'welcome') {
-    return <Welcome usuario={usuario} esNuevo={esNuevo} onContinuar={(generos) => console.log('Géneros elegidos:', generos)} />
+    return (
+      <Welcome usuario={usuario} esNuevo={esNuevo} onContinuar={(generos) => setPagina('home')}></Welcome>
+    )
   }
 
   if (pagina === 'login') {
-    return <Auth modoInicial="login" onVolver={() => setPagina('landing')} onEntrar={entrar} />
+    return (
+      <Auth modoInicial="login" onVolver={() => setPagina('landing')} onEntrar={entrar}></Auth>
+    )
   }
 
   if (pagina === 'register') {
-    return <Auth modoInicial="register" onVolver={() => setPagina('landing')} onEntrar={entrar} />
+    return (
+      <Auth modoInicial="register" onVolver={() => setPagina('landing')} onEntrar={entrar}></Auth>
+    )
+  }
+
+  if (pagina === 'home') {
+    return (
+      <Home></Home>
+    )
   }
 
   return <Landing onLogin={() => setPagina('login')} onRegister={() => setPagina('register')} />
