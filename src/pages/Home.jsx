@@ -1,5 +1,57 @@
-export default function Home() {
+import { useState } from "react";
+import { Search} from "lucide-react";
+import Logo from "../components/Logo"
+
+const sections = [
+    { id: 'parati', name: 'Para ti'},
+    { id: 'tendencias', name: 'Tendencias' },
+    { id: 'novedades', name: 'Novedades'},
+    { id: 'reciente', name: 'Recientes'},
+]
+
+export default function Home ({ usuario, esAdmin, onCargar }) {
+    const [section, setSections] = useState('parati')
+
     return (
-        <h1>Hola buenas</h1>
+        <div className="min-h-screen bg-white text-sm text-neutral-900">
+            <nav className="flex h-16 items-center px-6">
+                <Logo></Logo>
+                <div className="ml-auto flex items-center gap-5">
+                    <button onClick={() => onCargar('home')} className="font-medium">Inicio</button>
+                    <button onClick={() => onCargar('biblioteca')} className="text-neutral-500 hover:text-neutral-900">Biblioteca</button>
+                    {esAdmin && (
+                        <button onClick={() => onCargar('admin')}className="text-neutral-500 hover:text-neutral-900">Admin</button>
+                    )}
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold">
+                        {usuario.charAt(0).toUpperCase()}
+                    </span>
+                </div>
+            </nav>
+
+            <main className="mx-auto w-full max-w-[620px] px-6 pt-16">
+                <h1 className="mb-4 text-2xl font-semibold tracking-tight">Hola, {usuario}</h1>
+
+                <label className="flex h-11 items-center gap-3 rounded-lg border border-neutral-200 px-3">
+                    <Search size={16} className="text-neutral-400"></Search>
+                    <input placeholder="Cacniones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
+                </label>
+
+                <div className="mt-7 mb-2 flex gap-5 border-b border-neutral-100">
+                    {sections.map((tmp) => {
+                        if(tmp.id === section) {
+                            return (
+                                <button key={tmp.id} className="border-b-2 border-neutral-900 pb-2 font-medium">{tmp.name}</button>
+                            )
+                        } else {
+                            return (
+                                <button key={tmp.id} onClick={() => setSections(tmp.id)} className="pb-2 text-neutral-400 hover:text-neutral-900">{tmp.name}</button>
+                            )
+                        }
+                    })}
+                </div>
+
+                <p className="py-10 text-center text-neutral-400">Renato conecta el backend jaja.</p>
+            </main>
+        </div>
     )
 }

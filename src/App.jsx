@@ -8,6 +8,7 @@ export default function App() {
   const [pagina, setPagina] = useState('landing')
   const [usuario, setUsuario] = useState('')
   const [esNuevo, setEsNuevo] = useState(false)
+  const [esAdmin, setEsAdmin] = useState(false)
 
   function entrar(nombre, nuevo) {
     setUsuario(nombre)
@@ -35,7 +36,7 @@ export default function App() {
 
   if (pagina === 'home') {
     return (
-      <Home></Home>
+      <Home usuario={usuario} esAdmin={esAdmin} onCargar={(tmp) => console.log('Ir a:', tmp)}></Home>
     )
   }
 
