@@ -12,8 +12,8 @@ export default function Landing( {onLogin, onRegister} ) {
       <nav className="mx-auto flex h-16 w-full max-w-[880px] items-center px-6">
         <Logo></Logo>
         <div className="ml-auto flex items-center gap-5">
-          <button onClick={ onLogin } className="text-sm text-neutral-500 hover:text-neutral-900">Iniciar sesión</button>
-          <button onClick={ onRegister } className="h-8 rounded-md bg-neutral-900 text-white px-4 font-medium text-sm">Registrarse</button>
+          <button onClick={ onLogin } className="cursor-pointer text-sm text-neutral-500 hover:text-neutral-900">Iniciar sesión</button>
+          <button onClick={ onRegister } className="cursor-pointer h-8 rounded-md bg-neutral-900 text-white px-4 font-medium text-sm">Registrarse</button>
         </div>
       </nav>
 
@@ -22,23 +22,23 @@ export default function Landing( {onLogin, onRegister} ) {
           <h1 className="mb-2 text-4xl font-bold tracking-tight">Sonora</h1>
           <p className="mb-6 max-w-[300px] text-sm text-neutral-500">Un reproductor de música simple. Escucha, ordena y guarda tus canciones desde el navegador.</p>
           <div className="flex gap-2">
-            <button onClick={ onRegister } className="h-8 rounded-md bg-neutral-900 text-white px-4 font-medium text-sm">Crear cuenta</button>
-            <button onClick={ onLogin } className="h-8 rounded-md border border-neutral-200 px-3.5 font-medium text-sm">Iniciar sesión</button>
+            <button onClick={ onRegister } className="cursor-pointer h-8 rounded-md bg-neutral-900 text-white px-4 font-medium text-sm">Crear cuenta</button>
+            <button onClick={ onLogin } className="cursor-pointer h-8 rounded-md border border-neutral-200 px-3.5 font-medium text-sm">Iniciar sesión</button>
           </div>
         </section>
         <section className="border-t border-neutral-100">
           { funciones.map((f) => (
-            <div key={f.titulo} className="grid grid-cols-[200px_1fr] border-b border-neutral-100 py-3.5">
-              <span className="font-medium">{f.titulo}</span>
-              <span className="text-neutral-500">{f.texto}</span>
+            <div key={f.titulo} className="grid grid-cols-[100px_1fr] border-b border-neutral-100 py-4">
+              <span className="font-medium text-base">{f.titulo}</span>
+              <span className="text-neutral-500 text-base">{f.texto}</span>
             </div>
           ))}
         </section>
       </main>
 
       <footer className="mx-auto flex h-14 w-full max-w-[880px] items-center justify-between px-6 text-xs text-neutral-400">
-        <span>© Sonora · Proyecto educativo CIT2308</span>
-        <span>Términos · Privacidad</span>
+        <span className="text-xs text-neutral-400 cursor-pointer">© Sonora · Proyecto educativo CIT2308</span>
+        <span className="text-xs text-neutral-400 cursor-pointer">Términos · Privacidad</span>
       </footer>
     </div>
   )
