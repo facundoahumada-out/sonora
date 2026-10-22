@@ -33,7 +33,7 @@ export default function Home ({ usuario, esAdmin, onCargar }) {
 
                 <label className="flex h-11 items-center gap-3 rounded-lg border border-neutral-200 px-3">
                     <Search size={16} className="text-neutral-400"></Search>
-                    <input placeholder="Cacniones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
+                    <input placeholder="Canciones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
                 </label>
 
                 <div className="mt-7 mb-2 flex gap-5 border-b border-neutral-100">

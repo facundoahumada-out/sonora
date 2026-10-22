@@ -6,18 +6,75 @@ const botonPrincipal = 'h-9 w-full rounded-md bg-neutral-900 font-medium text-wh
 
 export default function Auth({ modoInicial, onVolver, onEntrar }) {
     const [modo, setModo] = useState(modoInicial)
-
-    function enviar(e) {
-        e.preventDefault()
-        const datos = new FormData(e.target)
-
-        // Provisional, Renato vincular backend de forma correcta
-        if (modo === 'register') {
-            onEntrar(datos.get('user'), true)
-        } else {
-            onEntrar(datos.get('mail').split('@')[0], false)
-        }
+    const[error, setError ]=useState('');
+    const[loading, setLoading]=useState(false);
+    const [recienRegistrado, setRecienRegistrado] = useState(false);
+    const cambiarTab=(nuevoModo)=>{
+        setError('');
+        setModo(nuevoModo);
     }
+    async function enviar(e) {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+        const datos = new FormData(e.target);
+        const name=datos.get('user');
+        const mail=datos.get('mail');
+        const password=datos.get('pass');
+        
+        if (modo === 'register') {
+            
+            try{
+                const response=await fetch('http://localhost:3000/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mail, password, rol: 'Oyente', name })
+                });
+                const data=await response.json();
+                if (response.ok) {
+                    alert('Registro correcto. Por favor inicia sesión.');
+                    setRecienRegistrado(true);
+                    cambiarTab('login');
+                } else {
+                    setError(data.error || 'Error durante el registro');
+                }
+            }
+            catch(error){
+                console.error ('Error durante el registro', error);
+                setError('Error de conexion con el servidor')
+            } 
+            finally{
+                setLoading(false);
+            }
+        } else {
+            try{
+                const response=await fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mail, password })
+            });
+            
+            const data=await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+                const nombreMostrar = data.name
+                onEntrar(nombreMostrar, recienRegistrado);
+                setRecienRegistrado(false);
+            } else {
+                setError(data.error || 'Credenciales incorrectas');
+            }
+        } catch (error) {
+            console.error('Error durante el login', error);
+            setError('Error de conexión con el servidor');
+        } 
+        finally {
+            setLoading(false);
+        }
+            }
+            
+        }
+    
 
     if (modo === 'register') {
         return (

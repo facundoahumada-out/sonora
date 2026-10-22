@@ -14,12 +14,17 @@ export default function App() {
   function entrar(nombre, nuevo) {
     setUsuario(nombre)
     setEsNuevo(nuevo)
-    setPagina('welcome')
-  }
+    if(nuevo){
+      setPagina('welcome')
+    }
+    else{
+      setPagina('home')
+    }
+    }
 
   if (pagina === 'welcome') {
     return (
-      <Welcome usuario={usuario} esNuevo={esNuevo} onContinuar={(generos) => setPagina('home')}></Welcome>
+      <Welcome usuario={usuario} esNuevo={esNuevo} onContinuar={(generos) => {setEsNuevo(false); setPagina('home')}}></Welcome>
     )
   }
 
