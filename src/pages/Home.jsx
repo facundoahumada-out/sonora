@@ -1,19 +1,50 @@
 import { useState } from "react";
-import { Search} from "lucide-react";
+import { Search, Heart, ListPlus, Play } from "lucide-react";
 import Logo from "../components/Logo"
 
 const sections = [
-    { id: 'parati', name: 'Para ti'},
+    { id: 'busqueda', name: 'Busqueda'},
     { id: 'tendencias', name: 'Tendencias' },
     { id: 'novedades', name: 'Novedades'},
     { id: 'reciente', name: 'Recientes'},
 ]
 
+const songs = {
+    busqueda: [
+        { title: 'none', artist: 'none', reason: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', reason: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', reason: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', reason: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', reason: 'none', cover: 'none'},
+    ],
+    tendencias: [
+        { title: 'none', artist: 'none', plays: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', plays: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', plays: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', plays: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', plays: 'none', cover: 'none'},
+    ],
+    novedades: [
+        { title: 'none', artist: 'none', year: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', year: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', year: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', year: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', year: 'none', cover: 'none'},
+    ],
+    reciente: [
+        { title: 'none', artist: 'none', time: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', time: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', time: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', time: 'none', cover: 'none'},
+        { title: 'none', artist: 'none', time: 'none', cover: 'none'},
+    ],
+}
+
 export default function Home ({ user, isAdmin, onLoad }) {
-    const [section, setSection] = useState('parati')
+    const [section, setSection] = useState('busqueda')
 
     return (
-        <div className="min-h-screen bg-white text-sm text-neutral-900">
+        <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
             <nav className="flex h-16 items-center px-6">
                 <Logo></Logo>
                 <div className="ml-auto flex items-center gap-5">
@@ -50,7 +81,54 @@ export default function Home ({ user, isAdmin, onLoad }) {
                     })}
                 </div>
 
-                <p className="py-10 text-center text-neutral-400">Renato conecta el backend jaja.</p>
+                {section === 'busqueda' && songs.busqueda.map((tmp, i) => (
+                    <div key={i} className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                        <div className={'h-10 w-10 rounded-md bg-linear-to-br ' + tmp.cover}></div>
+                        <div>
+                            <p className="font-medium">{tmp.title}</p>
+                            <p className="text-xs text-neutral-400">{tmp.artist} · {tmp.reason}</p>
+                        </div>
+                        <div className="ml-auto flex items-center gap-1 text-neutral-400">
+                            <button className="rounded-md p-1.5 hover:text-red-500"><Heart size={16}></Heart></button>
+                        </div>
+                    </div>
+                ))}
+                {section === 'tendencias' && songs.busqueda.map((tmp, i) => (
+                    <div key={i} className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                        <div className={'h-10 w-10 rounded-md bg-linear-to-br ' + tmp.cover}></div>
+                        <div>
+                            <p className="font-medium">{tmp.title}</p>
+                            <p className="text-xs text-neutral-400">{tmp.artist}</p>
+                        </div>
+                        <div className="ml-auto flex items-center gap-1 text-neutral-400">
+                            <div>{tmp.plays} reproducciones</div>
+                        </div>
+                    </div>
+                ))}
+                {section === 'novedades' && songs.busqueda.map((tmp, i) => (
+                    <div key={i} className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                        <div className={'h-10 w-10 rounded-md bg-linear-to-br ' + tmp.cover}></div>
+                        <div>
+                            <p className="font-medium">{tmp.title}</p>
+                            <p className="text-xs text-neutral-400">{tmp.artist}</p>
+                        </div>
+                        <div className="ml-auto flex items-center gap-1 text-neutral-400">
+                            <div>{tmp.year}</div>
+                        </div>
+                    </div>
+                ))}
+                {section === 'reciente' && songs.busqueda.map((tmp, i) => (
+                    <div key={i} className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                        <div className={'h-10 w-10 rounded-md bg-linear-to-br ' + tmp.cover}></div>
+                        <div>
+                            <p className="font-medium">{tmp.title}</p>
+                            <p className="text-xs text-neutral-400">{tmp.artist}</p>
+                        </div>
+                        <div className="ml-auto flex items-center gap-1 text-neutral-400">
+                            <div>{tmp.time}</div>
+                        </div>
+                    </div>
+                ))}
             </main>
         </div>
     )
