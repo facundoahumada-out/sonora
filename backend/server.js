@@ -3,6 +3,7 @@ import cors from 'cors';
 import bcrypt from 'bcrypt';
 import JWTService from './jwt.js';
 import { db, connectDB } from './db.js';
+import { loadSongs } from './seeding.js'
 const app = express();
 const saltRounds = 10;
 
@@ -79,6 +80,7 @@ const PORT = process.env.PORT;
 
 await connectDB();
 await db.collection('users').createIndex({ mail: 1 }, { unique: true });
+await loadSongs();
 app.listen(PORT, () => {
   console.log("Vicente observando en el puerto " + PORT);
 });
