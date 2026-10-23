@@ -4,6 +4,7 @@ import Landing from "./pages/Landing";
 import Welcome from "./pages/Welcome";
 import Home from "./pages/Home";
 import Collection from "./pages/Collection"
+import Reproductor from "./components/Reproductor";
 
 export default function App() {
   const [pagina, setPagina] = useState('landing')
@@ -37,7 +38,10 @@ export default function App() {
 
   if (pagina === 'home') {
     return (
-      <Home usuario={usuario} esAdmin={esAdmin} onCargar={(p) => setPagina(p)}></Home>
+      <div>
+        <Home usuario={usuario} esAdmin={esAdmin} onCargar={(p) => setPagina(p)}></Home>
+        <Reproductor></Reproductor>
+      </div>
     )
   }
 
