@@ -1,6 +1,6 @@
 import Logo from "../components/Logo";
 
-const funciones = [
+const functions = [
   { titulo: 'Busca', texto: 'Canciones, artistas y álbumes en una sola barra.' },
   { titulo: 'Organiza', texto: 'Crea listas para cada momento de tu día.' },
   { titulo: 'Continúa', texto: 'Tu última canción te espera cada vez que entras.' }
@@ -27,7 +27,7 @@ export default function Landing( {onLogin, onRegister} ) {
           </div>
         </section>
         <section className="border-t border-neutral-100">
-          { funciones.map((f) => (
+          { functions.map((f) => (
             <div key={f.titulo} className="grid grid-cols-[100px_1fr] border-b border-neutral-100 py-4">
               <span className="font-medium text-base">{f.titulo}</span>
               <span className="text-neutral-500 text-base">{f.texto}</span>
