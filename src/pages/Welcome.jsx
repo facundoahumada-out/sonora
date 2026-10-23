@@ -36,6 +36,19 @@ export default function Welcome({ user, isNew, onContinue }) {
             setChosen([...chosen, name])
         }
     }
+    async function save(){
+        const response=await fetch('http://localhost:3000/user/preferences', {
+            method: 'PATCH',
+            headers:{
+                'Content-Type': 'application/json','Authorization': 'Bearer '+localStorage.getItem('token')},
+                body: JSON.stringify({genres: chosen})});
+            if (response.ok){
+                onContinue(chosen);
+            }else{
+                console.error('No se pudieron guardar los géneros')
+            }
+        }
+    
 
     if (isNew) {
         return (
@@ -74,7 +87,7 @@ export default function Welcome({ user, isNew, onContinue }) {
 
                     <div className="flex items-center justify-between border-t border-neutral-100 px-5 py-3">
                         <span className="text-xs text-neutral-500">{chosen.length} de 3 mínimo</span>
-                        <button disabled={chosen.length < 3} onClick={() => onContinue(chosen)} className="flex h-8 items-center gap-2 rounded-md bg-neutral-900 px-4 font-medium text-white disabled:opacity-30">
+                        <button disabled={chosen.length < 3} onClick={save} className="flex h-8 items-center gap-2 rounded-md bg-neutral-900 px-4 font-medium text-white disabled:opacity-30">
                         Continuar <ArrowRight size={16}></ArrowRight>
                         </button>
                     </div>

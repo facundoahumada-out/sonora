@@ -11,14 +11,16 @@ app.use(cors());
 app.use(express.json()); 
 
 app.post('/register', async(req, res)=>{
-  const { mail, password, rol, name} = req.body;
+  const { mail, password, name} = req.body;
 
   try {
     const passwordHash = await bcrypt.hash(password, saltRounds);
     
-    await db.collection('users').insertOne({ mail: mail, password: passwordHash, rol: 'Oyente', name:name});
-
-    res.status(201).json({ mensaje: 'Usuario registrado con éxito' });
+    await db.collection('users').insertOne({ mail: mail, password: passwordHash, rol: 'Oyente', name:name, genres: []});
+    const newUser={mail:mail, rol:'Oyente', name:name};
+    const jwtService = new JWTService();
+    const generatedToken = jwtService.generateJWT(newUser);
+    res.status(201).json({ mensaje: 'Usuario registrado con éxito', token: generatedToken});
   } catch (error) {
     console.error('Error en /register:', error);
     res.status(500).json({ error: 'Error al registrar el usuario' });
@@ -44,8 +46,8 @@ app.post('/login', async(req,res)=>{
     }
 
     const jwtService = new JWTService();
-    const tokenGenerado = jwtService.generateJWT(searchUser);
-    res.json({ mensaje: 'Login correcto', token: tokenGenerado, name:searchUser.name });
+    const generatedToken = jwtService.generateJWT(searchUser);
+    res.json({ mensaje: 'Login correcto', token: generatedToken, name:searchUser.name });
   }
 
   catch (error){
@@ -75,6 +77,19 @@ app.get('/protected', checkToken, (req, res) => {
   const user = res.locals.user;
   res.json({ mensaje: "Usuario confirmado", user: user });
 });
+
+app.patch('/user/preferences', checkToken, async (req,res)=> {
+  const {genres}=req.body;
+  const user=res.locals.user;
+  try{
+    await db.collection('users').updateOne({mail: user.mail}, {$set: {genres: genres}});
+    res.json({mensaje: 'Géneros guardados'});
+  }catch(error){
+    console.error(error);
+    res.status(500).json({error: 'Error al guardar los géneros'})
+  }
+});
+
 
 const PORT = process.env.PORT;
 
