@@ -6,12 +6,13 @@ export default function Reproductor () {
     const [cola, setCola] = useState(false)
     const [meGusta, setMeGusta] = useState(false)
     const [playlists, setPlaylists] = useState(false)
+    const [controles, setControles] = useState(false)
 
     return (
         <div>
             {cola && (
                 <div>
-                    <div onClick={() => setCola(false)} className="fixed inset-0 x-20 bg-black/20 md:hidden"></div>
+                    <div onClick={() => setCola(false)} className="fixed inset-0 z-20 bg-black/20 md:hidden"></div>
                     <div className="fixed inset-x-2 bottom-[72px] z-30 rounded-2xl border border-neutral-100 bg-white p-2 text-sm shadow-xl md:inset-x-auto md:right-4 md:w-80 md:rounded-xl">
                         <div className="mx-auto mb-1 h-1 w-9 rounded-full bg-neutral-200 md:hidden"></div>
                         <div className="flex items-center justify-between px-2 py-1.5">
@@ -35,6 +36,38 @@ export default function Reproductor () {
                 </div>
             )}
 
+            {controles && (
+                <div className="md:hidden">
+                    <div onClick={() => setControles(false)} className="fixed inset-0 z-20 bg-black/20"></div>
+                    <div className="fixed inset-x-2 bottom-[72px] z-30 rounded-2xl border border-neutral-100 bg-white px-4 pb-4 pt-2 text-sm shadow-xl">
+                        <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-neutral-200"></div>
+                        <p className="text-center font-medium">Nada sonando</p>
+                        <p className="text-center text-xs text-neutral-400">Elige una canción</p>
+                        <div className="mt-4 flex items-center gap-2 text-[10px] text-neutral-400">
+                            <span>0:00</span>
+                            <div className="h-1 flex-1 rounded-full bg-neutral-100">
+                            <div className="h-1 w-0 rounded-full bg-neutral-900"></div>
+                            </div>
+                            <span>0:00</span>
+                        </div>
+                        <div className="mt-4 flex items-center justify-between px-4">
+                            <button className="text-neutral-400"><Shuffle size={14}></Shuffle></button>
+                            <button><SkipBack size={14} fill="currentColor"></SkipBack></button>
+
+                            {sonando && (
+                                <button onClick={() => setSonando(false)} className="flex h-12 w-12 items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
+                            )}
+                            {!sonando && (
+                                <button onClick={() => setSonando(true)} className="flex h-12 w-12 items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
+                            )}
+
+                            <button><SkipForward size={14} fill="currentColor"></SkipForward></button>
+                            <button className="text-neutral-400"><Repeat size={14}></Repeat></button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-center gap-3 border-t border-neutral-100 bg-white px-4 text-sm text-neutral-900">
                 <div className="absolute inset-x-0 top-0 h-1 bg-neutral-100 md:hidden">
                     <div className="h-1 w-0 bg-neutral-900"></div>
@@ -42,23 +75,23 @@ export default function Reproductor () {
 
                 <div className="flex flex-1 items-center gap-3">
                     <div className="h-10 w-10 rounded-md bg-neutral-100"></div>
-                    <div>
+                    <button onClick={() => {setControles(true); setCola(false); setPlaylists(false)}} className="text-left md:pointer-events-none">
                         <p className="font-medium">Nada sonando</p>
                         <p className="text-xs text-neutral-400">Elige una canción</p>
-                    </div>
+                    </button>
 
                     {meGusta && (
                         <button onClick={() => setMeGusta(false)} className="ml-2 text-red-400"><Heart size={14} fill="currentColor"></Heart></button>
                     )}
                     {!meGusta && (
-                        <button onClick={() => setMeGusta(true)} className="ml-2 text-red-400 hover:text-red-400"><Heart size={14}></Heart></button>
+                        <button onClick={() => setMeGusta(true)} className="ml-2 text-neutral-400 hover:text-red-400"><Heart size={14}></Heart></button>
                     )}
                     
                     {playlists && (
                         <button onClick={() => setPlaylists(false)} className="flex h-7 w-7 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListPlus size={14}></ListPlus></button>
                     )}
                     {!playlists && (
-                        <button onClick={() => { setPlaylists(true); setCola(false) }} className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:text-neutral-900"><ListPlus size={14}></ListPlus></button>
+                        <button onClick={() => { setPlaylists(true); setCola(false); setControles(false) }} className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:text-neutral-900"><ListPlus size={14}></ListPlus></button>
                     )}
                 </div>
 
@@ -90,7 +123,7 @@ export default function Reproductor () {
                         <button onClick={() => setCola(false)} className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListMusic size={14}></ListMusic></button>
                     )}
                     {!cola && (
-                        <button onClick={() => { setCola(true); setPlaylists(false) }} className="flex h-8 w-8 items-center justify-center rounded-md hover:text-neutral-900"><ListMusic size={14}></ListMusic></button>
+                        <button onClick={() => { setCola(true); setPlaylists(false); setControles(false) }} className="flex h-8 w-8 items-center justify-center rounded-md hover:text-neutral-900"><ListMusic size={14}></ListMusic></button>
                     )}
                     <div className="hidden items-center gap-2 md:flex">
                         <Volume2 size={14}></Volume2>
