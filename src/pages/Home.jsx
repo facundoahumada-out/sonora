@@ -9,7 +9,7 @@ const sections = [
     { id: 'reciente', name: 'Recientes'},
 ]
 
-export default function Home ({ usuario, esAdmin, onCargar }) {
+export default function Home ({ user, isAdmin, onLoad }) {
     const [section, setSection] = useState('parati')
 
     return (
@@ -17,23 +17,23 @@ export default function Home ({ usuario, esAdmin, onCargar }) {
             <nav className="flex h-16 items-center px-6">
                 <Logo></Logo>
                 <div className="ml-auto flex items-center gap-5">
-                    <button onClick={() => onCargar('home')} className="font-medium">Inicio</button>
-                    <button onClick={() => onCargar('collection')} className="text-neutral-500 hover:text-neutral-900">Biblioteca</button>
-                    {esAdmin && (
-                        <button onClick={() => onCargar('admin')}className="text-neutral-500 hover:text-neutral-900">Admin</button>
+                    <button onClick={() => onLoad('home')} className="font-medium">Inicio</button>
+                    <button onClick={() => onLoad('collection')} className="text-neutral-500 hover:text-neutral-900">Biblioteca</button>
+                    {isAdmin && (
+                        <button onClick={() => onLoad('admin')}className="text-neutral-500 hover:text-neutral-900">Admin</button>
                     )}
                     <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold">
-                        {usuario.charAt(0).toUpperCase()}
+                        {user.charAt(0).toUpperCase()}
                     </span>
                 </div>
             </nav>
 
             <main className="mx-auto w-full max-w-[720px] px-6 pt-16">
-                <h1 className="mb-4 text-2xl font-semibold tracking-tight">Hola, {usuario}</h1>
+                <h1 className="mb-4 text-2xl font-semibold tracking-tight">Hola, {user}</h1>
 
                 <label className="flex h-11 items-center gap-3 rounded-lg border border-neutral-200 px-3">
                     <Search size={16} className="text-neutral-400"></Search>
-                    <input placeholder="Cacniones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
+                    <input placeholder="Canciones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
                 </label>
 
                 <div className="mt-7 mb-2 flex gap-5 border-b border-neutral-100">

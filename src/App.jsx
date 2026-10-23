@@ -7,51 +7,59 @@ import Collection from "./pages/Collection"
 import Reproductor from "./components/Reproductor";
 
 export default function App() {
-  const [pagina, setPagina] = useState('landing')
-  const [usuario, setUsuario] = useState('')
-  const [esNuevo, setEsNuevo] = useState(false)
-  const [esAdmin, setEsAdmin] = useState(false)
+  const [page, setPage] = useState('landing')
+  const [user, setUser] = useState('')
+  const [isNew, setIsNew] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
-  function entrar(nombre, nuevo) {
-    setUsuario(nombre)
-    setEsNuevo(nuevo)
-    setPagina('welcome')
-  }
+  function enter(name, New) {
+    setUser(name)
+    setIsNew(New)
+    if(New){
+      setPage('welcome')
+    }
+    else{
+      setPage('home')
+    }
+    }
 
-  if (pagina === 'welcome') {
+  if (page === 'welcome') {
     return (
-      <Welcome usuario={usuario} esNuevo={esNuevo} onContinuar={(generos) => setPagina('home')}></Welcome>
+      <Welcome user={user} isNew={isNew} onContinue={(genre) => {setIsNew(false); setPage('home')}}></Welcome>
     )
   }
 
-  if (pagina === 'login') {
+  if (page === 'login') {
     return (
-      <Auth modoInicial="login" onVolver={() => setPagina('landing')} onEntrar={entrar}></Auth>
+      <Auth startingMode="login" onReturn={() => setPage('landing')} onEnter={enter}></Auth>
     )
   }
 
-  if (pagina === 'register') {
+  if (page === 'register') {
     return (
-      <Auth modoInicial="register" onVolver={() => setPagina('landing')} onEntrar={entrar}></Auth>
+      <Auth startingMode="register" onReturn={() => setPage('landing')} onEnter={enter}></Auth>
     )
   }
 
-  if (pagina === 'home') {
+  if (page === 'home') {
     return (
       <div>
-        <Home usuario={usuario} esAdmin={esAdmin} onCargar={(p) => setPagina(p)}></Home>
+        <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)}></Home>
         <Reproductor></Reproductor>
       </div>
     )
   }
 
-  if (pagina === 'collection') {
+  if (page === 'collection') {
     return (
-      <Collection usuario={usuario} esAdmin={esAdmin} onCargar={(p) => setPagina(p)}></Collection>
+      <div>
+        <Collection user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)}></Collection>
+        <Reproductor></Reproductor>
+      </div>
     )
   }
 
-  return <Landing onLogin={() => setPagina('login')} onRegister={() => setPagina('register')} />
+  return <Landing onLogin={() => setPage('login')} onRegister={() => setPage('register')} />
 }
 
 

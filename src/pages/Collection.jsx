@@ -8,7 +8,7 @@ const sections = [
     { id: 'historial', name: 'Historial'},
 ]
 
-export default function Collection ({ usuario, esAdmin, onCargar }) {
+export default function Collection ({ user, isAdmin, onLoad }) {
     const [section, setSection] = useState('playlists')
 
     return (
@@ -16,13 +16,13 @@ export default function Collection ({ usuario, esAdmin, onCargar }) {
             <nav className="flex h-16 items-center px-6">
                 <Logo></Logo>
                 <div className="ml-auto flex items-center gap-5">
-                    <button onClick={() => onCargar('home')} className="text-neutral-500 hover:text-neutral-900">Inicio</button>
-                    <button onClick={() => onCargar('collection')} className="font-medium">Biblioteca</button>
-                    {esAdmin && (
-                        <button onClick={() => onCargar('admin')}className="text-neutral-500 hover:text-neutral-900">Admin</button>
+                    <button onClick={() => onLoad('home')} className="text-neutral-500 hover:text-neutral-900">Inicio</button>
+                    <button onClick={() => onLoad('collection')} className="font-medium">Biblioteca</button>
+                    {isAdmin && (
+                        <button onClick={() => onLoad('admin')}className="text-neutral-500 hover:text-neutral-900">Admin</button>
                     )}
                     <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold">
-                        {usuario.charAt(0).toUpperCase()}
+                        {user.charAt(0).toUpperCase()}
                     </span>
                 </div>
             </nav>
