@@ -5,6 +5,7 @@ import Welcome from "./pages/Welcome";
 import Home from "./pages/Home";
 import Collection from "./pages/Collection"
 import Reproductor from "./components/Reproductor";
+import Profile from "./pages/Profile";
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -22,6 +23,14 @@ export default function App() {
       setPage('home')
     }
     }
+
+  function logout() {
+    localStorage.removeItem('token')
+    setUser('')
+    setIsNew(false)
+    setIsAdmin(false)
+    setPage('landing')
+  }
 
   if (page === 'welcome') {
     return (
@@ -58,6 +67,15 @@ export default function App() {
       </div>
     )
   }
+
+  if (page === 'profile') {
+  return (
+    <div>
+      <Profile user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} onLogout={logout}></Profile>
+      <Reproductor></Reproductor>
+    </div>
+  )
+}
 
   return <Landing onLogin={() => setPage('login')} onRegister={() => setPage('register')} />
 }

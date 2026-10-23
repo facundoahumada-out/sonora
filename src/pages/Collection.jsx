@@ -21,9 +21,9 @@ export default function Collection ({ user, isAdmin, onLoad }) {
                     {isAdmin && (
                         <button onClick={() => onLoad('admin')}className="text-neutral-500 hover:text-neutral-900">Admin</button>
                     )}
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold">
+                    <button onClick={() => onLoad('profile')} className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold">
                         {user.charAt(0).toUpperCase()}
-                    </span>
+                    </button>
                 </div>
             </nav>
 

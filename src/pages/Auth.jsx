@@ -6,8 +6,8 @@ const botonPrincipal = 'h-9 w-full rounded-md bg-neutral-900 font-medium text-wh
 
 export default function Auth({ startingMode, onReturn, onEnter}) {
     const [mode, setMode] = useState(startingMode)
-    const[error, setError ]=useState('');
-    const[loading, setLoading]=useState(false);
+    const [error, setError ]= useState('');
+    const [loading, setLoading]= useState(false);
     async function send(e) {
         e.preventDefault();
         setError('');
@@ -18,7 +18,6 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
         const password=data.get('pass');
         
         if (mode === 'register') {
-            
             try{
                 const response=await fetch('http://localhost:3000/register', {
                     method: 'POST',
@@ -35,7 +34,6 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
             }
             catch(error){
                 console.error ('Error durante el registro', error);
-                setError('Error de conexion con el servidor')
             } 
             finally{
                 setLoading(false);
@@ -58,7 +56,6 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
             }
         } catch (error) {
             console.error('Error durante el login', error);
-            setError('Error de conexión con el servidor');
         } 
         finally {
             setLoading(false);
@@ -90,6 +87,7 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
                         <input name="mail" required type="email" placeholder="Correo electrónico" className={inputClase} />
                         <input name="pass" required type="password" placeholder="Contraseña (mín. 8 caracteres)" className={inputClase} />
                         <p className="flex h-5 items-center text-sm text-neutral-500">Al registrarte aceptas los <a href="#" className="text-neutral-900 underline px-1">Términos</a>.</p>
+                        {error && <p className="text-sm text-red-500">{error}</p>}
                         <button type="submit" className={botonPrincipal}>Crear cuenta</button>
                     </form>
                     
@@ -131,6 +129,7 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
                             <a href="#" className="text-neutral-900 px-1">¿Olvidaste tu contraseña?</a>
                         </p>
                         <div className="h-9" aria-hidden="true"></div>
+                        {error && <p className="text-sm text-red-500">{error}</p>}
                         <button type="submit" className={botonPrincipal}>Iniciar sesión</button>
                     </form>
                     
