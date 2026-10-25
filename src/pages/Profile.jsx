@@ -1,19 +1,10 @@
 import { Camera, LogOut } from "lucide-react"
-import Logo from "../components/Logo"
+import Navbar from "../components/Navbar"
 
 export default function Profile({ user, isAdmin, onLoad, onLogout }) {
     return (
         <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
-            <nav className="flex h-16 items-center px-6">
-                <Logo onClick={() => onLoad('home')}></Logo>
-                <div className="ml-auto flex items-center gap-5">
-                    <button onClick={() => onLoad('home')} className="cursor-pointer text-neutral-500 hover:text-neutral-900">Inicio</button>
-                    <button onClick={() => onLoad('collection')} className="cursor-pointer text-neutral-500 hover:text-neutral-900">Biblioteca</button>
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900 text-xs font-semibold text-white">
-                        {user.charAt(0).toUpperCase()}
-                    </span>
-                </div>
-            </nav>
+            <Navbar user={user} active="profile" onLoad={onLoad}></Navbar>
 
             <main className="mx-auto w-full max-w-[460px] px-6 pt-16">
                 <h1 className="mb-8 text-2xl font-semibold tracking-tight">Tu perfil</h1>

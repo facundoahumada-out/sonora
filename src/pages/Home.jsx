@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Search, Heart, ListPlus, Play } from "lucide-react";
-import Logo from "../components/Logo"
-import SongCover from "../components/SongCover";
+import Navbar from "../components/Navbar"
+import Tabs from "../components/Tabs";
+import SongRow from "../components/SongRow";
 
 const sections = [
     { id: 'busqueda', name: 'Búsqueda'},
@@ -37,26 +38,10 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
         setCurrentSong(song);
         setPlaying(true);
     }
-
-    function playWithKeyboard(e, song) {
-        if (e.target === e.currentTarget && e.key === 'Enter') {
-            e.preventDefault();
-            play(song);
-        }
-    }
     
     return (
         <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
-            <nav className="flex h-16 items-center px-6">
-                <Logo onClick={() => onLoad('home')}></Logo>
-                <div className="ml-auto flex items-center gap-5">
-                    <button onClick={() => onLoad('home')} className="cursor-pointer font-medium">Inicio</button>
-                    <button onClick={() => onLoad('collection')} className="cursor-pointer text-neutral-500 hover:text-neutral-900">Biblioteca</button>
-                    <button onClick={() => onLoad('profile')} className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold">
-                        {user.charAt(0).toUpperCase()}
-                    </button>
-                </div>
-            </nav>
+            <Navbar user={user} active="home" onLoad={onLoad}></Navbar>
 
             <main className="mx-auto w-full max-w-[720px] px-6 pt-16">
                 <h1 className="mb-4 text-2xl font-semibold tracking-tight">Hola, {user}</h1>
@@ -66,19 +51,7 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
                     <input aria-label="Buscar canciones, álbumes, artistas o géneros" placeholder="Canciones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
                 </label>
 
-                <div className="mt-7 mb-2 flex gap-5 border-b border-neutral-100">
-                    {sections.map((tmp) => {
-                        if(tmp.id === section) {
-                            return (
-                                <button key={tmp.id} className="cursor-pointer border-b-2 border-neutral-900 pb-2 font-medium">{tmp.name}</button>
-                            )
-                        } else {
-                            return (
-                                <button key={tmp.id} onClick={() => setSection(tmp.id)} className="cursor-pointer pb-2 text-neutral-400 hover:text-neutral-900">{tmp.name}</button>
-                            )
-                        }
-                    })}
-                </div>
+                <Tabs sections={sections} active={section} onChange={setSection} className="mt-7 mb-2"></Tabs>
 
                 {loading && (
                     <p className="py-10 text-center text-neutral-400">Cargando canciones…</p>
@@ -90,41 +63,20 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
                     <p className="py-10 text-center text-neutral-400">No hay canciones disponibles por ahora.</p>
                 )}
 
-                {section === 'busqueda' &&songs.map((tmp) => (
-                    <div key={tmp.id} role="button" tabIndex={0} aria-label={'Reproducir ' + tmp.title + ' de ' + tmp.artist_name} onClick={() => play(tmp)} onKeyDown={(e) => playWithKeyboard(e, tmp)} className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50 focus-visible:bg-neutral-50">
-                        <SongCover song={tmp} playable active={currentSong?.id === tmp.id}></SongCover>
-                        <div>
-                            <p className="font-medium">{tmp.title}</p>
-                            <p className="text-xs text-neutral-400">{tmp.artist_name} · {tmp.album_name}</p>
-                        </div>
-                        <div className="ml-auto flex items-center gap-1 text-neutral-400">
-                            <button onClick={(e) => e.stopPropagation()} aria-label={'Agregar ' + tmp.title + ' a favoritos'} className="cursor-pointer rounded-md p-1.5 hover:text-red-500"><Heart size={16}></Heart></button>
-                        </div>
-                    </div>
+                {section === 'busqueda' && songs.map((tmp) => (
+                    <SongRow key={tmp.id} song={tmp} subtitle={tmp.artist_name + ' · ' + tmp.album_name} active={currentSong?.id === tmp.id} onPlay={() => play(tmp)}>
+                        <button onClick={(e) => e.stopPropagation()} aria-label={'Agregar ' + tmp.title + ' a favoritos'} className="cursor-pointer rounded-md p-1.5 hover:text-red-500"><Heart size={16}></Heart></button>
+                    </SongRow>
                 ))}
                 {section === 'tendencias' && trending.map((tmp) => (
-                    <div key={tmp.id} role="button" tabIndex={0} aria-label={'Reproducir ' + tmp.title + ' de ' + tmp.artist_name} onClick={() => play(tmp)} onKeyDown={(e) => playWithKeyboard(e, tmp)} className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50 focus-visible:bg-neutral-50">
-                        <SongCover song={tmp} playable active={currentSong?.id === tmp.id}></SongCover>
-                        <div>
-                            <p className="font-medium">{tmp.title}</p>
-                            <p className="text-xs text-neutral-400">{tmp.artist_name}</p>
-                        </div>
-                        <div className="ml-auto flex items-center gap-1 text-neutral-400">
-                            <div>{tmp.plays.toLocaleString('es-CL')} {tmp.plays === 1 ? 'reproducción' : 'reproducciones'}</div>
-                        </div>
-                    </div>
+                    <SongRow key={tmp.id} song={tmp} active={currentSong?.id === tmp.id} onPlay={() => play(tmp)}>
+                        <div>{tmp.plays.toLocaleString('es-CL')} {tmp.plays === 1 ? 'reproducción' : 'reproducciones'}</div>
+                    </SongRow>
                 ))}
                 {section === 'novedades' && newest.map((tmp) => (
-                    <div key={tmp.id} role="button" tabIndex={0} aria-label={'Reproducir ' + tmp.title + ' de ' + tmp.artist_name} onClick={() => play(tmp)} onKeyDown={(e) => playWithKeyboard(e, tmp)} className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50 focus-visible:bg-neutral-50">
-                        <SongCover song={tmp} playable active={currentSong?.id === tmp.id}></SongCover>
-                        <div>
-                            <p className="font-medium">{tmp.title}</p>
-                            <p className="text-xs text-neutral-400">{tmp.artist_name}</p>
-                        </div>
-                        <div className="ml-auto flex items-center gap-1 text-neutral-400">
-                            <div>{new Date(tmp.release_date + 'T00:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
-                        </div>
-                    </div>
+                    <SongRow key={tmp.id} song={tmp} active={currentSong?.id === tmp.id} onPlay={() => play(tmp)}>
+                        <div>{new Date(tmp.release_date + 'T00:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                    </SongRow>
                 ))}
                 {section === 'reciente' && (
                     <p className="py-10 text-center text-neutral-400">Aún no has escuchado canciones.</p>
