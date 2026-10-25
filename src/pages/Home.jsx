@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Search, Heart, ListPlus, Play } from "lucide-react";
 import Logo from "../components/Logo"
 const sections = [
-    { id: 'busqueda', name: 'Busqueda'},
+    { id: 'busqueda', name: 'Búsqueda'},
     { id: 'tendencias', name: 'Tendencias' },
     { id: 'novedades', name: 'Novedades'},
     { id: 'reciente', name: 'Recientes'},

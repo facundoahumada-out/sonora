@@ -32,7 +32,6 @@ export default function Welcome({ user, isNew, onContinue }) {
         if (chosen.includes(name)) {
             setChosen(chosen.filter((tmp) => tmp !== name))
         } else {
-            // Nota para Renato: Los (...) hace que se acumulen los géneros elegidos.
             setChosen([...chosen, name])
         }
     }

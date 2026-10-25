@@ -42,7 +42,7 @@ app.post('/login', async(req,res)=>{
     const checkPassword = await bcrypt.compare(password, searchUser.password);
 
     if (!checkPassword){
-      return res.status(401).json({error: 'Contrasena incorrecta'})
+      return res.status(401).json({error: 'Contraseña incorrecta'})
     }
 
     const jwtService = new JWTService();

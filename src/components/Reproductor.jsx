@@ -54,7 +54,7 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
                         <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-neutral-200"></div>
                         <p className="text-center font-medium">{currentSong? currentSong.title: "Nada sonando"}</p>
                         
-                        <p className="text-center text-xs text-neutral-400">Elige una canción</p>
+                        <p className="text-center text-xs text-neutral-400">{currentSong ? currentSong.artist_name : "Elige una canción"}</p>
                         <div className="mt-4 flex items-center gap-2 text-[10px] text-neutral-400">
                             <span>0:00</span>
                             <div className="h-1 flex-1 rounded-full bg-neutral-100">
@@ -88,8 +88,8 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
                 <div className="flex flex-1 items-center gap-3">
                     <div className="h-10 w-10 rounded-md bg-neutral-100"></div>
                     <button onClick={() => {setControls(true); setQueue(false); setPlaylists(false)}} className="text-left md:pointer-events-none">
-                        <p className="font-medium">{currentSong ? currentSong.title: "Nada playing"}</p>
-                        <p className="text-xs text-neutral-400">Elige una canción</p>
+                        <p className="font-medium">{currentSong ? currentSong.title: "Nada sonando"}</p>
+                        <p className="text-xs text-neutral-400">{currentSong ? currentSong.artist_name : "Elige una canción"}</p>
                     </button>
 
                     {liked && (

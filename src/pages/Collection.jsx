@@ -48,19 +48,19 @@ export default function Collection ({ user, isAdmin, onLoad }) {
                     <div>
                         <div className="mb-5 flex flex-wrap gap-2">
                             <button className="flex h-8 items-center gap-1.5 rounded-md border border-dashed border-neutral-300 px-3 text-neutral-500 hover:text-neutral-900">
-                                <Plus size={16} /> Nueva Playlist
+                                <Plus size={16} /> Nueva playlist
                             </button>
                         </div>
-                        <p className="py-10 text-center text-neutral-400">Renato conecta API para playlists, please.</p>
+                        <p className="py-10 text-center text-neutral-400">Aún no tienes playlists.</p>
                     </div>
                 )}
 
                 {section === 'favoritos' && (
-                    <p className="py-10 text-center text-neutral-400">Renato hacer función de favoritos, please.</p>
+                    <p className="py-10 text-center text-neutral-400">Aún no tienes canciones favoritas.</p>
                 )}
 
                 {section === 'historial' && (
-                    <p className="py-10 text-center text-neutral-400">Renato hacer función de historial, please..</p>
+                    <p className="py-10 text-center text-neutral-400">Aún no has escuchado canciones.</p>
                 )}
             </main> 
         </div>
