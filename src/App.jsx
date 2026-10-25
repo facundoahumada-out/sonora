@@ -12,6 +12,8 @@ export default function App() {
   const [user, setUser] = useState('')
   const [isNew, setIsNew] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [currentSong, setCurrentSong]=useState(null);
+  const [playing, setPlaying]=useState(false);
 
   function enter(name, New) {
     setUser(name)
@@ -53,8 +55,8 @@ export default function App() {
   if (page === 'home') {
     return (
       <div>
-        <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)}></Home>
-        <Reproductor></Reproductor>
+        <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} setCurrentSong={setCurrentSong} setPlaying={setPlaying}></Home>
+        <Reproductor currentSong={currentSong} playing={playing} setPlaying={setPlaying}></Reproductor>
       </div>
     )
   }

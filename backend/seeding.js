@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { db } from './db.js';
 dotenv.config();
 const JAMENDO_CLIENT_ID=process.env.JAMENDO_CLIENT_ID;
-const seeds=[{offset: 200, limit: 200},{offset: 400, limit:100}];
+const seeds=[{offset: 200, limit: 100},{offset: 300, limit: 100},{offset: 400, limit: 100},{offset: 500, limit: 100},{offset: 600, limit:100}];
 export async function loadSongs(){
     try {
         const count=await db.collection('songs').countDocuments();
@@ -13,7 +13,7 @@ export async function loadSongs(){
     let addedSongs=[];
     
     for (const adding of seeds){
-        const url=`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_CLIENT_ID}&format=json&limit=${adding.limit}&offset=${adding.offset}&audioformat=mp32&order=popularity_week&include=musicinfo`;
+        const url=`https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_CLIENT_ID}&format=json&limit=${adding.limit}&offset=${adding.offset}&audioformat=mp32&order=popularity_week&include=musicinfo+stats`;
         const response=await fetch(url);
         const data=await response.json();
         if(data.results){
@@ -22,7 +22,7 @@ export async function loadSongs(){
     console.log(`Se obtuvieron ${addedSongs.length} canciones de Jamendo`);
 
     for(const track of addedSongs){
-        await db.collection('songs').insertOne({id: track.id, title: track.name, artist_name: track.artist_name, album_name: track.album_name, duration: track.duration, cover_image: track.image, audio_url: track.audio, genres: track.musicinfo?.tags?.genres, isActive: true});
+        await db.collection('songs').insertOne({id: track.id, title: track.name, artist_name: track.artist_name, album_name: track.album_name, duration: track.duration, cover_image: track.image, audio_url: track.audio, genres: track.musicinfo?.tags?.genres, isActive: true, plays:track.stats?.rate_listened_total ||0, release_date: track.releasedate||null});
 
     }
         console.log('Base de datos rellenada');

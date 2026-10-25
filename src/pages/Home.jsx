@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Search, Heart, ListPlus, Play } from "lucide-react";
 import Logo from "../components/Logo"
-
 const sections = [
     { id: 'busqueda', name: 'Busqueda'},
     { id: 'tendencias', name: 'Tendencias' },
@@ -10,7 +9,7 @@ const sections = [
 ]
 
 
-export default function Home ({ user, isAdmin, onLoad }) {
+export default function Home ({ user, isAdmin, onLoad, setCurrentSong, setPlaying }) {
     const [section, setSection] = useState('busqueda')
     const [songs, setSongs]= useState([]);
     useEffect(()=>{
@@ -57,11 +56,11 @@ export default function Home ({ user, isAdmin, onLoad }) {
                 </div>
 
                 {section === 'busqueda' && songs.map((tmp, i) => (
-                    <div key={i} className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                    <div key={i}  onClick={()=>{setCurrentSong(tmp); setPlaying(true);}}className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
                         <img src={tmp.cover_image} alt={tmp.title} className="h-10 w-10 rounded-md object-cover bg-neutral-100" />
                         <div>
                             <p className="font-medium">{tmp.title}</p>
-                            <p className="text-xs text-neutral-400">{tmp.artist_name} · {tmp.reason}</p>
+                            <p className="text-xs text-neutral-400">{tmp.artist_name} · {tmp.album_name}</p>
                         </div>
                         <div className="ml-auto flex items-center gap-1 text-neutral-400">
                             <button className="rounded-md p-1.5 hover:text-red-500"><Heart size={16}></Heart></button>
