@@ -51,7 +51,7 @@ export default function Welcome({ user, isNew, onContinue }) {
 
     if (isNew) {
         return (
-            <div className="relative flex min-h-screen flex-col items-center justify-center bg-neutral-50 text-sm text-neutral-900">
+            <div className="relative flex min-h-screen flex-col items-center justify-center bg-white text-sm text-neutral-900">
                 <div className="absolute left-6 top-5">
                     <Logo></Logo>
                 </div>
@@ -70,13 +70,13 @@ export default function Welcome({ user, isNew, onContinue }) {
                         {genres.map((tmp) => {
                             if (chosen.includes(tmp.name)) {
                                 return (
-                                    <button key={tmp.name} onClick={() => alternate(tmp.name)} className={'flex h-9 items-center gap-2 rounded-lg px-3 font-medium ring-1 ' + tmp.color}>
+                                    <button key={tmp.name} onClick={() => alternate(tmp.name)} className={'cursor-pointer flex h-9 items-center gap-2 rounded-lg px-3 font-medium ring-1 ' + tmp.color}>
                                         {tmp.icon} {tmp.name}
                                     </button>
                                 )
                             } else {
                                 return (
-                                    <button key={tmp.name} onClick={() => alternate(tmp.name)} className="flex h-9 items-center gap-2 rounded-lg px-3 font-medium text-neutral-500 ring-1 ring-neutral-200">
+                                    <button key={tmp.name} onClick={() => alternate(tmp.name)} className="cursor-pointer flex h-9 items-center gap-2 rounded-lg px-3 font-medium text-neutral-500 ring-1 ring-neutral-200">
                                         {tmp.icon} {tmp.name}
                                     </button>
                                 )
@@ -86,7 +86,7 @@ export default function Welcome({ user, isNew, onContinue }) {
 
                     <div className="flex items-center justify-between border-t border-neutral-100 px-5 py-3">
                         <span className="text-xs text-neutral-500">{chosen.length} de 3 mínimo</span>
-                        <button disabled={chosen.length < 3} onClick={save} className="flex h-8 items-center gap-2 rounded-md bg-neutral-900 px-4 font-medium text-white disabled:opacity-30">
+                        <button disabled={chosen.length < 3} onClick={save} className="flex h-9 cursor-pointer items-center gap-2 rounded-md bg-neutral-900 px-4 font-medium text-white disabled:cursor-not-allowed disabled:opacity-50">
                         Continuar <ArrowRight size={16}></ArrowRight>
                         </button>
                     </div>
@@ -95,13 +95,13 @@ export default function Welcome({ user, isNew, onContinue }) {
         )
     } else {
         return (
-            <div className="relative flex min-h-screen flex-col items-center justify-center bg-neutral-50 text-sm text-neutral-900">
+            <div className="relative flex min-h-screen flex-col items-center justify-center bg-white text-sm text-neutral-900">
                 <div className="absolute left-6 top-5">
                     <Logo onClick={() => onContinue([])}></Logo>
                 </div>
 
                 <div className="flex items-center gap-5">
-                    <h1 className="text-6xl font-bold tracking-tighter">Hola,</h1>
+                    <h1 className="text-5xl font-bold tracking-tighter">Hola,</h1>
                     <span className="rounded-2xl border-2 border-dashed border-blue-500 px-5 py-2 text-2xl font-medium text-blue-600">{user}</span>
                 </div>
             </div>

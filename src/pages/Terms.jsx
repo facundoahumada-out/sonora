@@ -25,7 +25,7 @@ export default function Terms({ onReturn, onLogo }) {
     <div className="flex min-h-screen flex-col bg-white text-sm text-neutral-900">
       <nav className="mx-auto flex h-16 w-full max-w-[880px] items-center px-6">
         <Logo onClick={onLogo}></Logo>
-        <button onClick={onReturn} className="ml-auto flex items-center gap-1.5 text-neutral-500 hover:text-neutral-900">
+        <button onClick={onReturn} className="cursor-pointer ml-auto flex items-center gap-1.5 text-neutral-500 hover:text-neutral-900">
           <ArrowLeft size={14}></ArrowLeft>Volver
         </button>
       </nav>

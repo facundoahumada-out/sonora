@@ -42,7 +42,7 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
                     <div className="fixed inset-x-2 bottom-[72px] z-30 rounded-2xl border border-neutral-100 bg-white p-2 text-sm shadow-xl md:inset-x-auto md:left-4 md:w-72 md:rounded-xl">
                         <div className="mx-auto mb-1 h-1 w-9 rounded-full bg-neutral-200 md:hidden"></div>
                         <div className="px-2 py-1.5 font-medium">Agregar a playlist</div>
-                        <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"><Plus size={14}></Plus>Nueva playlist</button>
+                        <button className="cursor-pointer flex w-full items-center gap-2 rounded-md px-2 py-2 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"><Plus size={14}></Plus>Nueva playlist</button>
                         <p className="py-6 text-center text-neutral-400">Aún no tienes playlists.</p>
                     </div>
                 </div>
@@ -64,18 +64,18 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
                             <span>0:00</span>
                         </div>
                         <div className="mt-4 flex items-center justify-between px-4">
-                            <button aria-label="Reproducción aleatoria" className="text-neutral-400"><Shuffle size={14}></Shuffle></button>
-                            <button aria-label="Canción anterior"><SkipBack size={14} fill="currentColor"></SkipBack></button>
+                            <button aria-label="Reproducción aleatoria" className="cursor-pointer text-neutral-400"><Shuffle size={14}></Shuffle></button>
+                            <button aria-label="Canción anterior" className="cursor-pointer"><SkipBack size={14} fill="currentColor"></SkipBack></button>
 
                             {playing && (
-                                <button aria-label="Pausar" onClick={() => setPlaying(false)} className="flex h-12 w-12 items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
+                                <button aria-label="Pausar" onClick={() => setPlaying(false)} className="cursor-pointer flex h-12 w-12 items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
                             )}
                             {!playing && (
-                                <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="flex h-12 w-12 items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
+                                <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="cursor-pointer flex h-12 w-12 items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
                             )}
 
-                            <button aria-label="Canción siguiente"><SkipForward size={14} fill="currentColor"></SkipForward></button>
-                            <button aria-label="Repetir" className="text-neutral-400"><Repeat size={14}></Repeat></button>
+                            <button aria-label="Canción siguiente" className="cursor-pointer"><SkipForward size={14} fill="currentColor"></SkipForward></button>
+                            <button aria-label="Repetir" className="cursor-pointer text-neutral-400"><Repeat size={14}></Repeat></button>
                         </div>
                     </div>
                 </div>
@@ -92,38 +92,38 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
                     ) : (
                         <div className="h-10 w-10 rounded-md bg-neutral-100"></div>
                     )}
-                    <button onClick={() => {setControls(true); setQueue(false); setPlaylists(false)}} className="text-left md:pointer-events-none">
+                    <button onClick={() => {setControls(true); setQueue(false); setPlaylists(false)}} className="cursor-pointer text-left md:pointer-events-none">
                         <p className="font-medium">{currentSong ? currentSong.title: "Nada sonando"}</p>
                         <p className="text-xs text-neutral-400">{currentSong ? currentSong.artist_name : "Elige una canción"}</p>
                     </button>
 
                     {liked && (
-                        <button aria-label="Quitar de favoritos" onClick={() => setLiked(false)} className="ml-2 text-red-400"><Heart size={14} fill="currentColor"></Heart></button>
+                        <button aria-label="Quitar de favoritos" onClick={() => setLiked(false)} className="cursor-pointer ml-2 text-red-400"><Heart size={14} fill="currentColor"></Heart></button>
                     )}
                     {!liked && (
-                        <button aria-label="Agregar a favoritos" onClick={() => setLiked(true)} className="ml-2 text-neutral-400 hover:text-red-400"><Heart size={14}></Heart></button>
+                        <button aria-label="Agregar a favoritos" onClick={() => setLiked(true)} className="cursor-pointer ml-2 text-neutral-400 hover:text-red-400"><Heart size={14}></Heart></button>
                     )}
                     
                     {playlists && (
-                        <button aria-label="Cerrar panel de playlists" onClick={() => setPlaylists(false)} className="flex h-7 w-7 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListPlus size={14}></ListPlus></button>
+                        <button aria-label="Cerrar panel de playlists" onClick={() => setPlaylists(false)} className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListPlus size={14}></ListPlus></button>
                     )}
                     {!playlists && (
-                        <button aria-label="Agregar a playlist" onClick={() => { setPlaylists(true); setQueue(false); setControls(false) }} className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:text-neutral-900"><ListPlus size={14}></ListPlus></button>
+                        <button aria-label="Agregar a playlist" onClick={() => { setPlaylists(true); setQueue(false); setControls(false) }} className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:text-neutral-900"><ListPlus size={14}></ListPlus></button>
                     )}
                 </div>
 
                 <div className="hidden flex-[2] flex-col items-center gap-1 md:flex">
                     <div className="flex items-center gap-5">
-                        <button aria-label="Reproducción aleatoria" className="text-neutral-400 hover:text-neutral-900"><Shuffle size={14}></Shuffle></button>
-                        <button aria-label="Canción anterior" className="hover:text-neutral-600"><SkipBack size={14} fill="currentColor"></SkipBack></button>
+                        <button aria-label="Reproducción aleatoria" className="cursor-pointer text-neutral-400 hover:text-neutral-900"><Shuffle size={14}></Shuffle></button>
+                        <button aria-label="Canción anterior" className="cursor-pointer hover:text-neutral-600"><SkipBack size={14} fill="currentColor"></SkipBack></button>
                         {playing && (
-                            <button aria-label="Pausar" onClick={() => setPlaying(false)} className="flex items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
+                            <button aria-label="Pausar" onClick={() => setPlaying(false)} className="cursor-pointer flex items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
                         )}
                         {!playing && (
-                            <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="flex items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
+                            <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="cursor-pointer flex items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
                         )}
-                        <button aria-label="Canción siguiente" className="hover:text-neutral-600"><SkipForward size={14} fill="currentColor"></SkipForward></button>
-                        <button aria-label="Repetir" className="text-neutral-400 hover:text-neutral-900"><Repeat size={14}></Repeat></button>
+                        <button aria-label="Canción siguiente" className="cursor-pointer hover:text-neutral-600"><SkipForward size={14} fill="currentColor"></SkipForward></button>
+                        <button aria-label="Repetir" className="cursor-pointer text-neutral-400 hover:text-neutral-900"><Repeat size={14}></Repeat></button>
                     </div>
 
                     <div className="flex w-full max-w-[420px] items-center gap-2 text-[10px] text-neutral-400">
@@ -137,20 +137,20 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
 
                 <div className="flex flex-1 items-center justify-end gap-3 text-neutral-400">
                     {queue && (
-                        <button aria-label="Cerrar cola de reproducción" onClick={() => setQueue(false)} className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListMusic size={14}></ListMusic></button>
+                        <button aria-label="Cerrar cola de reproducción" onClick={() => setQueue(false)} className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListMusic size={14}></ListMusic></button>
                     )}
                     {!queue && (
-                        <button aria-label="Ver cola de reproducción" onClick={() => { setQueue(true); setPlaylists(false); setControls(false) }} className="flex h-8 w-8 items-center justify-center rounded-md hover:text-neutral-900"><ListMusic size={14}></ListMusic></button>
+                        <button aria-label="Ver cola de reproducción" onClick={() => { setQueue(true); setPlaylists(false); setControls(false) }} className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-md hover:text-neutral-900"><ListMusic size={14}></ListMusic></button>
                     )}
                     <div className="hidden items-center gap-2 md:flex">
                         <Volume2 size={14}></Volume2>
                         <input aria-label="Volumen" type="range" min="0" max="100" defaultValue="70" className="w-24 accent-neutral-900" />
                     </div>
                     {playing && (
-                        <button aria-label="Pausar" onClick={() => setPlaying(false)} className="flex h-9 w-9 items-center justify-center text-neutral-900 md:hidden"><Pause size={16} fill="currentColor"></Pause></button>
+                        <button aria-label="Pausar" onClick={() => setPlaying(false)} className="cursor-pointer flex h-9 w-9 items-center justify-center text-neutral-900 md:hidden"><Pause size={16} fill="currentColor"></Pause></button>
                     )}
                     {!playing && (
-                        <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="flex h-9 w-9 items-center justify-center text-neutral-900 md:hidden"><Play size={16} fill="currentColor"></Play></button>
+                        <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="cursor-pointer flex h-9 w-9 items-center justify-center text-neutral-900 md:hidden"><Play size={16} fill="currentColor"></Play></button>
                     )}
                 </div>
             </div>

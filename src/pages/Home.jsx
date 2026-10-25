@@ -38,9 +38,9 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
             <nav className="flex h-16 items-center px-6">
                 <Logo onClick={() => onLoad('home')}></Logo>
                 <div className="ml-auto flex items-center gap-5">
-                    <button onClick={() => onLoad('home')} className="font-medium">Inicio</button>
-                    <button onClick={() => onLoad('collection')} className="text-neutral-500 hover:text-neutral-900">Biblioteca</button>
-                    <button onClick={() => onLoad('profile')} className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold">
+                    <button onClick={() => onLoad('home')} className="cursor-pointer font-medium">Inicio</button>
+                    <button onClick={() => onLoad('collection')} className="cursor-pointer text-neutral-500 hover:text-neutral-900">Biblioteca</button>
+                    <button onClick={() => onLoad('profile')} className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold">
                         {user.charAt(0).toUpperCase()}
                     </button>
                 </div>
@@ -58,11 +58,11 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
                     {sections.map((tmp) => {
                         if(tmp.id === section) {
                             return (
-                                <button key={tmp.id} className="border-b-2 border-neutral-900 pb-2 font-medium">{tmp.name}</button>
+                                <button key={tmp.id} className="cursor-pointer border-b-2 border-neutral-900 pb-2 font-medium">{tmp.name}</button>
                             )
                         } else {
                             return (
-                                <button key={tmp.id} onClick={() => setSection(tmp.id)} className="pb-2 text-neutral-400 hover:text-neutral-900">{tmp.name}</button>
+                                <button key={tmp.id} onClick={() => setSection(tmp.id)} className="cursor-pointer pb-2 text-neutral-400 hover:text-neutral-900">{tmp.name}</button>
                             )
                         }
                     })}
@@ -86,7 +86,7 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
                             <p className="text-xs text-neutral-400">{tmp.artist_name} · {tmp.album_name}</p>
                         </div>
                         <div className="ml-auto flex items-center gap-1 text-neutral-400">
-                            <button onClick={(e) => e.stopPropagation()} aria-label={'Agregar ' + tmp.title + ' a favoritos'} className="rounded-md p-1.5 hover:text-red-500"><Heart size={16}></Heart></button>
+                            <button onClick={(e) => e.stopPropagation()} aria-label={'Agregar ' + tmp.title + ' a favoritos'} className="cursor-pointer rounded-md p-1.5 hover:text-red-500"><Heart size={16}></Heart></button>
                         </div>
                     </div>
                 ))}

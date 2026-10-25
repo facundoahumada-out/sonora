@@ -2,7 +2,7 @@ import { useState } from "react";
 import Logo from "../components/Logo";
 
 const inputClase = 'h-9 w-full rounded-md border border-neutral-200 px-3 text-sm outline-none placeholder:text-neutral-400 focus:border-neutral-900'
-const botonPrincipal = 'h-9 w-full rounded-md bg-neutral-900 font-medium text-white mt-4 disabled:opacity-50'
+const botonPrincipal = 'h-9 w-full rounded-md bg-neutral-900 font-medium text-white mt-4 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50'
 
 export default function Auth({ startingMode, onReturn, onEnter, onTerms}) {
     const [mode, setMode] = useState(startingMode)
@@ -95,7 +95,7 @@ export default function Auth({ startingMode, onReturn, onEnter, onTerms}) {
                     
                     <p className="mt-4 h-[18px] text-xs text-neutral-500">
                         ¿Ya tienes cuenta?
-                        <button type="button" onClick={() => setMode('login')} className="text-neutral-900 underline px-1">
+                        <button type="button" onClick={() => setMode('login')} className="cursor-pointer text-neutral-900 underline px-1">
                             Inicia sesión
                         </button>
                     </p>
@@ -135,7 +135,7 @@ export default function Auth({ startingMode, onReturn, onEnter, onTerms}) {
                     
                     <p className="mt-4 h-[18px] text-xs text-neutral-500">
                         ¿No tienes cuenta?
-                        <button type="button" onClick={() => setMode('register')} className="text-neutral-900 underline px-1">
+                        <button type="button" onClick={() => setMode('register')} className="cursor-pointer text-neutral-900 underline px-1">
                             Regístrate
                         </button>
                     </p>
