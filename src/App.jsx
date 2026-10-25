@@ -31,6 +31,8 @@ export default function App() {
     setUser('')
     setIsNew(false)
     setIsAdmin(false)
+    setCurrentSong(null)
+    setPlaying(false)
     setPage('landing')
   }
 
@@ -52,32 +54,25 @@ export default function App() {
     )
   }
 
+  const pagesWithPlayer = ['home', 'collection', 'profile']
+
+  let content
   if (page === 'home') {
+    content = <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} setCurrentSong={setCurrentSong} setPlaying={setPlaying}></Home>
+  } else if (page === 'collection') {
+    content = <Collection user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)}></Collection>
+  } else if (page === 'profile') {
+    content = <Profile user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} onLogout={logout}></Profile>
+  }
+
+  if (pagesWithPlayer.includes(page)) {
     return (
       <div>
-        <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} setCurrentSong={setCurrentSong} setPlaying={setPlaying}></Home>
+        {content}
         <Reproductor currentSong={currentSong} playing={playing} setPlaying={setPlaying}></Reproductor>
       </div>
     )
   }
-
-  if (page === 'collection') {
-    return (
-      <div>
-        <Collection user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)}></Collection>
-        <Reproductor></Reproductor>
-      </div>
-    )
-  }
-
-  if (page === 'profile') {
-  return (
-    <div>
-      <Profile user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} onLogout={logout}></Profile>
-      <Reproductor></Reproductor>
-    </div>
-  )
-}
 
   return <Landing onLogin={() => setPage('login')} onRegister={() => setPage('register')} />
 }

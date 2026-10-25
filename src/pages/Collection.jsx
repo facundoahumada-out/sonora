@@ -12,7 +12,7 @@ export default function Collection ({ user, isAdmin, onLoad }) {
     const [section, setSection] = useState('playlists')
 
     return (
-        <div className="min-h-screen bg-white text-sm text-neutral-900">
+        <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
             <nav className="flex h-16 items-center px-6">
                 <Logo></Logo>
                 <div className="ml-auto flex items-center gap-5">
