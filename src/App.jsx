@@ -71,7 +71,7 @@ export default function App() {
 
   let content
   if (page === 'home') {
-    content = <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} setCurrentSong={setCurrentSong} setPlaying={setPlaying}></Home>
+    content = <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} currentSong={currentSong} setCurrentSong={setCurrentSong} setPlaying={setPlaying}></Home>
   } else if (page === 'collection') {
     content = <Collection user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)}></Collection>
   } else if (page === 'profile') {

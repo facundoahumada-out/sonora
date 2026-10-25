@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Search, Heart, ListPlus, Play } from "lucide-react";
 import Logo from "../components/Logo"
+import SongCover from "../components/SongCover";
 
 const sections = [
     { id: 'busqueda', name: 'Búsqueda'},
@@ -10,7 +11,7 @@ const sections = [
 ]
 
 
-export default function Home ({ user, isAdmin, onLoad, setCurrentSong, setPlaying }) {
+export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSong, setPlaying }) {
     const [section, setSection] = useState('busqueda')
     const [songs, setSongs]= useState([]);
     const [loading, setLoading] = useState(true);
@@ -28,6 +29,9 @@ export default function Home ({ user, isAdmin, onLoad, setCurrentSong, setPlayin
         })
         .finally(()=>setLoading(false));
     }, []);
+    
+    const trending = [...songs].sort((a, b) => b.plays - a.plays).slice(0, 20);
+    const newest = songs.filter((tmp) => tmp.release_date).sort((a, b) => b.release_date.localeCompare(a.release_date)).slice(0, 20);
     
     return (
         <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
@@ -47,7 +51,7 @@ export default function Home ({ user, isAdmin, onLoad, setCurrentSong, setPlayin
 
                 <label className="flex h-11 items-center gap-3 rounded-lg border border-neutral-200 px-3">
                     <Search size={16} className="text-neutral-400"></Search>
-                    <input placeholder="Canciones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
+                    <input aria-label="Buscar canciones, álbumes, artistas o géneros" placeholder="Canciones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
                 </label>
 
                 <div className="mt-7 mb-2 flex gap-5 border-b border-neutral-100">
@@ -75,53 +79,44 @@ export default function Home ({ user, isAdmin, onLoad, setCurrentSong, setPlayin
                 )}
 
                 {section === 'busqueda' &&songs.map((tmp, i) => (
-                    <div key={i}  onClick={()=>{setCurrentSong(tmp); setPlaying(true);}}className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
-                        <img src={tmp.cover_image} alt={tmp.title} className="h-10 w-10 rounded-md object-cover bg-neutral-100" />
+                    <div key={i}  onClick={()=>{setCurrentSong(tmp); setPlaying(true);}}className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                        <SongCover song={tmp} playable active={currentSong?.id === tmp.id}></SongCover>
                         <div>
                             <p className="font-medium">{tmp.title}</p>
                             <p className="text-xs text-neutral-400">{tmp.artist_name} · {tmp.album_name}</p>
                         </div>
                         <div className="ml-auto flex items-center gap-1 text-neutral-400">
-                            <button className="rounded-md p-1.5 hover:text-red-500"><Heart size={16}></Heart></button>
+                            <button onClick={(e) => e.stopPropagation()} aria-label={'Agregar ' + tmp.title + ' a favoritos'} className="rounded-md p-1.5 hover:text-red-500"><Heart size={16}></Heart></button>
                         </div>
                     </div>
                 ))}
-                {section === 'tendencias' && songs.map((tmp, i) => (
-                    <div key={i} className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
-                        <img src={tmp.cover_image} alt={tmp.title} className="h-10 w-10 rounded-md object-cover bg-neutral-100" />
+                {section === 'tendencias' && trending.map((tmp) => (
+                    <div key={tmp.id} onClick={()=>{setCurrentSong(tmp); setPlaying(true);}} className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                        <SongCover song={tmp} playable active={currentSong?.id === tmp.id}></SongCover>
                         <div>
                             <p className="font-medium">{tmp.title}</p>
                             <p className="text-xs text-neutral-400">{tmp.artist_name}</p>
                         </div>
                         <div className="ml-auto flex items-center gap-1 text-neutral-400">
-                            <div>{tmp.plays} reproducciones</div>
+                            <div>{tmp.plays.toLocaleString('es-CL')} {tmp.plays === 1 ? 'reproducción' : 'reproducciones'}</div>
                         </div>
                     </div>
                 ))}
-                {section === 'novedades' && songs.map((tmp, i) => (
-                    <div key={i} className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
-                        <img src={tmp.cover_image} alt={tmp.title} className="h-10 w-10 rounded-md object-cover bg-neutral-100"/>
+                {section === 'novedades' && newest.map((tmp) => (
+                    <div key={tmp.id} onClick={()=>{setCurrentSong(tmp); setPlaying(true);}} className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                        <SongCover song={tmp} playable active={currentSong?.id === tmp.id}></SongCover>
                         <div>
                             <p className="font-medium">{tmp.title}</p>
                             <p className="text-xs text-neutral-400">{tmp.artist_name}</p>
                         </div>
                         <div className="ml-auto flex items-center gap-1 text-neutral-400">
-                            <div>{tmp.year}</div>
+                            <div>{new Date(tmp.release_date + 'T00:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                         </div>
                     </div>
                 ))}
-                {section === 'reciente' && songs.map((tmp, i) => (
-                    <div key={i} className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
-                        <img src={tmp.cover_image} alt={tmp.title} className="h-10 w-10 rounded-md object-cover bg-neutral-100" />
-                        <div>
-                            <p className="font-medium">{tmp.title}</p>
-                            <p className="text-xs text-neutral-400">{tmp.artist_name}</p>
-                        </div>
-                        <div className="ml-auto flex items-center gap-1 text-neutral-400">
-                            <div>{tmp.time}</div>
-                        </div>
-                    </div>
-                ))}
+                {section === 'reciente' && (
+                    <p className="py-10 text-center text-neutral-400">Aún no has escuchado canciones.</p>
+                )}
             </main>
         </div>
     )
