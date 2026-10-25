@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Search, Heart, ListPlus, Play } from "lucide-react";
 import Logo from "../components/Logo"
+
 const sections = [
     { id: 'busqueda', name: 'Búsqueda'},
     { id: 'tendencias', name: 'Tendencias' },
@@ -12,11 +13,22 @@ const sections = [
 export default function Home ({ user, isAdmin, onLoad, setCurrentSong, setPlaying }) {
     const [section, setSection] = useState('busqueda')
     const [songs, setSongs]= useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     useEffect(()=>{
         fetch('http://localhost:3000/songs')
-        .then(res=> res.json())
-        .then(data=>setSongs(data));
+        .then(res=> {
+            if (!res.ok) throw new Error('Respuesta ' + res.status);
+            return res.json();
+        })
+        .then(data=>setSongs(data))
+        .catch((err)=> {
+            console.error('Error al cargar canciones', err);
+            setError('No se pudieron cargar las canciones. Recarga la página para intentarlo de nuevo.');
+        })
+        .finally(()=>setLoading(false));
     }, []);
+    
     return (
         <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
             <nav className="flex h-16 items-center px-6">
@@ -55,7 +67,17 @@ export default function Home ({ user, isAdmin, onLoad, setCurrentSong, setPlayin
                     })}
                 </div>
 
-                {section === 'busqueda' && songs.map((tmp, i) => (
+                {loading && (
+                    <p className="py-10 text-center text-neutral-400">Cargando canciones…</p>
+                )}
+                {error && (
+                    <p role="alert" className="py-10 text-center text-red-500">{error}</p>
+                )}
+                {!loading && !error && songs.length === 0 && (
+                    <p className="py-10 text-center text-neutral-400">No hay canciones disponibles por ahora.</p>
+                )}
+
+                {section === 'busqueda' &&songs.map((tmp, i) => (
                     <div key={i}  onClick={()=>{setCurrentSong(tmp); setPlaying(true);}}className="flex items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
                         <img src={tmp.cover_image} alt={tmp.title} className="h-10 w-10 rounded-md object-cover bg-neutral-100" />
                         <div>
