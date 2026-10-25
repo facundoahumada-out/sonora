@@ -32,6 +32,18 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
     
     const trending = [...songs].sort((a, b) => b.plays - a.plays).slice(0, 20);
     const newest = songs.filter((tmp) => tmp.release_date).sort((a, b) => b.release_date.localeCompare(a.release_date)).slice(0, 20);
+
+    function play(song) {
+        setCurrentSong(song);
+        setPlaying(true);
+    }
+
+    function playWithKeyboard(e, song) {
+        if (e.target === e.currentTarget && e.key === 'Enter') {
+            e.preventDefault();
+            play(song);
+        }
+    }
     
     return (
         <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
@@ -49,7 +61,7 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
             <main className="mx-auto w-full max-w-[720px] px-6 pt-16">
                 <h1 className="mb-4 text-2xl font-semibold tracking-tight">Hola, {user}</h1>
 
-                <label className="flex h-11 items-center gap-3 rounded-lg border border-neutral-200 px-3">
+                <label className="flex h-11 items-center gap-3 rounded-lg border border-neutral-200 px-3 focus-within:border-neutral-900">
                     <Search size={16} className="text-neutral-400"></Search>
                     <input aria-label="Buscar canciones, álbumes, artistas o géneros" placeholder="Canciones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
                 </label>
@@ -78,8 +90,8 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
                     <p className="py-10 text-center text-neutral-400">No hay canciones disponibles por ahora.</p>
                 )}
 
-                {section === 'busqueda' &&songs.map((tmp, i) => (
-                    <div key={i}  onClick={()=>{setCurrentSong(tmp); setPlaying(true);}}className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                {section === 'busqueda' &&songs.map((tmp) => (
+                    <div key={tmp.id} role="button" tabIndex={0} aria-label={'Reproducir ' + tmp.title + ' de ' + tmp.artist_name} onClick={() => play(tmp)} onKeyDown={(e) => playWithKeyboard(e, tmp)} className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50 focus-visible:bg-neutral-50">
                         <SongCover song={tmp} playable active={currentSong?.id === tmp.id}></SongCover>
                         <div>
                             <p className="font-medium">{tmp.title}</p>
@@ -91,7 +103,7 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
                     </div>
                 ))}
                 {section === 'tendencias' && trending.map((tmp) => (
-                    <div key={tmp.id} onClick={()=>{setCurrentSong(tmp); setPlaying(true);}} className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                    <div key={tmp.id} role="button" tabIndex={0} aria-label={'Reproducir ' + tmp.title + ' de ' + tmp.artist_name} onClick={() => play(tmp)} onKeyDown={(e) => playWithKeyboard(e, tmp)} className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50 focus-visible:bg-neutral-50">
                         <SongCover song={tmp} playable active={currentSong?.id === tmp.id}></SongCover>
                         <div>
                             <p className="font-medium">{tmp.title}</p>
@@ -103,7 +115,7 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
                     </div>
                 ))}
                 {section === 'novedades' && newest.map((tmp) => (
-                    <div key={tmp.id} onClick={()=>{setCurrentSong(tmp); setPlaying(true);}} className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50">
+                    <div key={tmp.id} role="button" tabIndex={0} aria-label={'Reproducir ' + tmp.title + ' de ' + tmp.artist_name} onClick={() => play(tmp)} onKeyDown={(e) => playWithKeyboard(e, tmp)} className="group flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50 focus-visible:bg-neutral-50">
                         <SongCover song={tmp} playable active={currentSong?.id === tmp.id}></SongCover>
                         <div>
                             <p className="font-medium">{tmp.title}</p>

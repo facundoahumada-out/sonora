@@ -85,9 +85,18 @@ export default function Auth({ startingMode, onReturn, onEnter, onTerms}) {
                         </button>
                     </div>
                     <form onSubmit={ send } className="flex flex-col gap-3">
-                        <input name="user" required type="text" placeholder="Nombre de usuario" className={inputClase} />
-                        <input name="mail" required type="email" placeholder="Correo electrónico" className={inputClase} />
-                        <input name="pass" required minLength={8} type="password" placeholder="Contraseña (mín. 8 caracteres)" className={inputClase} />
+                        <label className="flex flex-col gap-1.5">
+                            <span className="text-xs font-medium text-neutral-500">Nombre de usuario</span>
+                            <input name="user" required type="text" autoComplete="username" placeholder="Ej: marin" className={inputClase} />
+                        </label>
+                        <label className="flex flex-col gap-1.5">
+                            <span className="text-xs font-medium text-neutral-500">Correo electrónico</span>
+                            <input name="mail" required type="email" autoComplete="email" placeholder="tu@correo.cl" className={inputClase} />
+                        </label>
+                        <label className="flex flex-col gap-1.5">
+                            <span className="text-xs font-medium text-neutral-500">Contraseña</span>
+                            <input name="pass" required minLength={8} type="password" autoComplete="new-password" placeholder="Mínimo 8 caracteres" className={inputClase} />
+                        </label>
                         <p className="flex h-5 items-center text-sm text-neutral-500">Al registrarte aceptas los <button type="button" onClick={onTerms} className="cursor-pointer text-neutral-900 underline px-1">Términos</button>.</p>
                         {error && <p className="text-sm text-red-500">{error}</p>}
                         <button type="submit" disabled={loading} className={botonPrincipal}>{loading ? 'Creando cuenta…' : 'Crear cuenta'}</button>
@@ -125,10 +134,16 @@ export default function Auth({ startingMode, onReturn, onEnter, onTerms}) {
                         </button>
                     </div>
                     <form onSubmit={ send } className="flex flex-col gap-3">
-                        <input name="mail" required type="email" placeholder="Correo electrónico" className={inputClase} />
-                        <input name="pass" required type="password" placeholder="Contraseña" className={inputClase} />
+                        <label className="flex flex-col gap-1.5">
+                            <span className="text-xs font-medium text-neutral-500">Correo electrónico</span>
+                            <input name="mail" required type="email" autoComplete="email" placeholder="tu@correo.cl" className={inputClase} />
+                        </label>
+                        <label className="flex flex-col gap-1.5">
+                            <span className="text-xs font-medium text-neutral-500">Contraseña</span>
+                            <input name="pass" required type="password" autoComplete="current-password" placeholder="********" className={inputClase} />
+                        </label>
                         <div className="h-5" aria-hidden="true"></div>
-                        <div className="h-9" aria-hidden="true"></div>
+                        <div className="h-[58px]" aria-hidden="true"></div>
                         {error && <p className="text-sm text-red-500">{error}</p>}
                         <button type="submit" disabled={loading} className={botonPrincipal}>{loading ? 'Entrando…' : 'Iniciar sesión'}</button>
                     </form>

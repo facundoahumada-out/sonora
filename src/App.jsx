@@ -25,13 +25,8 @@ export default function App() {
   function enter(name, New) {
     setUser(name)
     setIsNew(New)
-    if(New){
-      setPage('welcome')
-    }
-    else{
-      setPage('home')
-    }
-    }
+    setPage('welcome')
+  }
 
   function logout() {
     localStorage.removeItem('token')

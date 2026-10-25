@@ -19,6 +19,17 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
         }
 
     },[playing,currentSong]);
+
+    useEffect(() => {
+        function handleSpace(e) {
+            if (e.code !== 'Space' || e.repeat || !currentSong) return;
+            if (e.target.closest('input, textarea, select, button, [contenteditable="true"]')) return;
+            e.preventDefault();
+            setPlaying(!playing);
+        }
+        window.addEventListener('keydown', handleSpace);
+        return () => window.removeEventListener('keydown', handleSpace);
+    }, [currentSong, playing, setPlaying]);
     return (
         <div>
             <audio ref={audioRef} src={currentSong?.audio_url}/>
