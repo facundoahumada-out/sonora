@@ -5,13 +5,10 @@ export default function Profile({ user, isAdmin, onLoad, onLogout }) {
     return (
         <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
             <nav className="flex h-16 items-center px-6">
-                <Logo></Logo>
+                <Logo onClick={() => onLoad('home')}></Logo>
                 <div className="ml-auto flex items-center gap-5">
                     <button onClick={() => onLoad('home')} className="text-neutral-500 hover:text-neutral-900">Inicio</button>
                     <button onClick={() => onLoad('collection')} className="text-neutral-500 hover:text-neutral-900">Biblioteca</button>
-                    {isAdmin && (
-                        <button onClick={() => onLoad('admin')} className="text-neutral-500 hover:text-neutral-900">Admin</button>
-                    )}
                     <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900 text-xs font-semibold text-white">
                         {user.charAt(0).toUpperCase()}
                     </span>

@@ -6,7 +6,7 @@ const functions = [
   { titulo: 'Continúa', texto: 'Tu última canción te espera cada vez que entras.' }
 ]
 
-export default function Landing( {onLogin, onRegister} ) {
+export default function Landing( {onLogin, onRegister, onTerms} ) {
   return (
     <div className="flex min-h-screen flex-col bg-white text-[13px] text-neutral-900">
       <nav className="mx-auto flex h-16 w-full max-w-[880px] items-center px-6">
@@ -37,8 +37,8 @@ export default function Landing( {onLogin, onRegister} ) {
       </main>
 
       <footer className="mx-auto flex h-14 w-full max-w-[880px] items-center justify-between px-6 text-xs text-neutral-400">
-        <span className="text-xs text-neutral-400 cursor-pointer">© Sonora · Proyecto educativo CIT2308</span>
-        <span className="text-xs text-neutral-400 cursor-pointer">Términos · Privacidad</span>
+        <span className="text-xs text-neutral-400">© Sonora · Proyecto educativo CIT2308</span>
+        <button onClick={ onTerms } className="cursor-pointer text-xs text-neutral-400 hover:text-neutral-900">Términos · Privacidad</button>
       </footer>
     </div>
   )

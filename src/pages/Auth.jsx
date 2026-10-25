@@ -4,7 +4,7 @@ import Logo from "../components/Logo";
 const inputClase = 'h-9 w-full rounded-md border border-neutral-200 px-3 text-sm outline-none placeholder:text-neutral-400 focus:border-neutral-900'
 const botonPrincipal = 'h-9 w-full rounded-md bg-neutral-900 font-medium text-white mt-4 disabled:opacity-50'
 
-export default function Auth({ startingMode, onReturn, onEnter}) {
+export default function Auth({ startingMode, onReturn, onEnter, onTerms}) {
     const [mode, setMode] = useState(startingMode)
     const [error, setError ]= useState('');
     const [loading, setLoading]= useState(false);
@@ -71,7 +71,7 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
         return (
             <div className="relative flex min-h-screen items-center justify-center bg-white text-sm text-neutral-900">
                 <div className="w-[300px]">
-                    <button type="button" onClick={onReturn} aria-label="Volver al inicio" className="mb-7 block">
+                    <button type="button" onClick={onReturn} aria-label="Volver al inicio" className="mb-7 block cursor-pointer">
                         <Logo></Logo>
                     </button>
                     <h1 className="text-lg font-semibold">Crear cuenta en Sonora</h1>
@@ -88,7 +88,7 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
                         <input name="user" required type="text" placeholder="Nombre de usuario" className={inputClase} />
                         <input name="mail" required type="email" placeholder="Correo electrónico" className={inputClase} />
                         <input name="pass" required minLength={8} type="password" placeholder="Contraseña (mín. 8 caracteres)" className={inputClase} />
-                        <p className="flex h-5 items-center text-sm text-neutral-500">Al registrarte aceptas los <a href="#" className="text-neutral-900 underline px-1">Términos</a>.</p>
+                        <p className="flex h-5 items-center text-sm text-neutral-500">Al registrarte aceptas los <button type="button" onClick={onTerms} className="cursor-pointer text-neutral-900 underline px-1">Términos</button>.</p>
                         {error && <p className="text-sm text-red-500">{error}</p>}
                         <button type="submit" disabled={loading} className={botonPrincipal}>{loading ? 'Creando cuenta…' : 'Crear cuenta'}</button>
                     </form>
@@ -103,7 +103,7 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
 
                 <footer className="absolute inset-x-0 bottom-0 mx-auto flex h-14 w-full max-w-[880px] items-center justify-between px-6 text-xs text-neutral-400">
                     <span>© Sonora · Proyecto educativo CIT2308</span>
-                    <span>Términos · Privacidad</span>
+                    <button type="button" onClick={onTerms} className="cursor-pointer hover:text-neutral-900">Términos · Privacidad</button>
                 </footer>
             </div>
         )
@@ -111,7 +111,7 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
         return (
             <div className="relative flex min-h-screen items-center justify-center bg-white text-sm text-neutral-900">
                 <div className="w-[300px]">
-                    <button type="button" onClick={onReturn} aria-label="Volver al inicio" className="mb-7 block">
+                    <button type="button" onClick={onReturn} aria-label="Volver al inicio" className="mb-7 block cursor-pointer">
                         <Logo></Logo>
                     </button>
                     <h1 className="text-lg font-semibold">Entrar a Sonora</h1>
@@ -127,9 +127,7 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
                     <form onSubmit={ send } className="flex flex-col gap-3">
                         <input name="mail" required type="email" placeholder="Correo electrónico" className={inputClase} />
                         <input name="pass" required type="password" placeholder="Contraseña" className={inputClase} />
-                        <p className="flex h-5 items-center justify-end text-sm text-neutral-500">
-                            <a href="#" className="text-neutral-900 px-1">¿Olvidaste tu contraseña?</a>
-                        </p>
+                        <div className="h-5" aria-hidden="true"></div>
                         <div className="h-9" aria-hidden="true"></div>
                         {error && <p className="text-sm text-red-500">{error}</p>}
                         <button type="submit" disabled={loading} className={botonPrincipal}>{loading ? 'Entrando…' : 'Iniciar sesión'}</button>
@@ -145,7 +143,7 @@ export default function Auth({ startingMode, onReturn, onEnter}) {
 
                 <footer className="absolute inset-x-0 bottom-0 mx-auto flex h-14 w-full max-w-[880px] items-center justify-between px-6 text-xs text-neutral-400">
                     <span>© Sonora · Proyecto educativo CIT2308</span>
-                    <span>Términos · Privacidad</span>
+                    <button type="button" onClick={onTerms} className="cursor-pointer hover:text-neutral-900">Términos · Privacidad</button>
                 </footer>
             </div>
         )

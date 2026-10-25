@@ -97,7 +97,7 @@ export default function Welcome({ user, isNew, onContinue }) {
         return (
             <div className="relative flex min-h-screen flex-col items-center justify-center bg-neutral-50 text-sm text-neutral-900">
                 <div className="absolute left-6 top-5">
-                    <Logo></Logo>
+                    <Logo onClick={() => onContinue([])}></Logo>
                 </div>
 
                 <div className="flex items-center gap-5">

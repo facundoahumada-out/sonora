@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Collection from "./pages/Collection"
 import Reproductor from "./components/Reproductor";
 import Profile from "./pages/Profile";
+import Terms from "./pages/Terms";
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -14,6 +15,12 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [currentSong, setCurrentSong]=useState(null);
   const [playing, setPlaying]=useState(false);
+  const [termsFrom, setTermsFrom] = useState('landing')
+
+  function openTerms() {
+    setTermsFrom(page)
+    setPage('terms')
+  }
 
   function enter(name, New) {
     setUser(name)
@@ -44,13 +51,19 @@ export default function App() {
 
   if (page === 'login') {
     return (
-      <Auth startingMode="login" onReturn={() => setPage('landing')} onEnter={enter}></Auth>
+      <Auth startingMode="login" onReturn={() => setPage('landing')} onEnter={enter} onTerms={openTerms}></Auth>
+    )
+  }
+
+  if (page === 'terms') {
+    return (
+      <Terms onReturn={() => setPage(termsFrom)} onLogo={() => setPage(user ? 'home' : 'landing')}></Terms>
     )
   }
 
   if (page === 'register') {
     return (
-      <Auth startingMode="register" onReturn={() => setPage('landing')} onEnter={enter}></Auth>
+      <Auth startingMode="register" onReturn={() => setPage('landing')} onEnter={enter} onTerms={openTerms}></Auth>
     )
   }
 
@@ -74,7 +87,7 @@ export default function App() {
     )
   }
 
-  return <Landing onLogin={() => setPage('login')} onRegister={() => setPage('register')} />
+  return <Landing onLogin={() => setPage('login')} onRegister={() => setPage('register')} onTerms={openTerms} />
 }
 
 

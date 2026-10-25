@@ -32,13 +32,10 @@ export default function Home ({ user, isAdmin, onLoad, setCurrentSong, setPlayin
     return (
         <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
             <nav className="flex h-16 items-center px-6">
-                <Logo></Logo>
+                <Logo onClick={() => onLoad('home')}></Logo>
                 <div className="ml-auto flex items-center gap-5">
                     <button onClick={() => onLoad('home')} className="font-medium">Inicio</button>
                     <button onClick={() => onLoad('collection')} className="text-neutral-500 hover:text-neutral-900">Biblioteca</button>
-                    {isAdmin && (
-                        <button onClick={() => onLoad('admin')}className="text-neutral-500 hover:text-neutral-900">Admin</button>
-                    )}
                     <button onClick={() => onLoad('profile')} className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold">
                         {user.charAt(0).toUpperCase()}
                     </button>
