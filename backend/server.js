@@ -98,7 +98,60 @@ app.get('/songs', async(req,res)=>{
     res.status(500).json({error: "No se pudieron obtener las canciones"});
   }
 });
+app.post('/user/likes', async (req, res) => {
+  try{
+    await db.collection('likes').updateOne(req.body, { $set: req.body }, { upsert: true });
+    res.json('ok');
+  }catch(error){
+    res.status(500).json({error: "Error al asignar like"})
+  }
+});
 
+app.delete('/user/likes', async (req, res) => {
+  try{
+    await db.collection('likes').deleteOne(req.body);
+    res.json('ok');
+  }catch(error){
+    res.status(500).json({error: "No se pudo eliminar like"})
+  }
+});
+
+app.get('/user/likes/:mail', async (req, res) => {
+  try{
+    const likes = await db.collection('likes').find({ user_mail: req.params.mail }).toArray();
+    res.json(likes);
+  }catch(error){
+    res.status(500).json({error: "No se pudo importar los likes"})
+  }
+});
+
+app.post('/user/playlists', async (req, res) => {
+  try{
+    const playlistId = Date.now().toString();
+    await db.collection('playlists').insertOne({ _id: playlistId, name: req.body.name, user_mail: req.body.user_mail, songs: [] });
+    res.json({ id: playlistId });
+  }catch(error){
+    res.status(500).json({error: "No se pudo crear la playlist"})
+  }
+});
+
+app.get('/user/playlists/:mail', async (req, res) => {
+  try{
+    const playlists = await db.collection('playlists').find({ user_mail: req.params.mail }).toArray();
+    res.json(playlists);
+  }catch(error){
+    res.status(500).json({error: "No se pudo importar la playlist"})
+  }
+});
+
+app.post('/user/playlists/add-song', async (req, res) => {
+  try{
+    await db.collection('playlists').updateOne({ _id: req.body.playlist_id }, { $addToSet: { songs: req.body.song_id } });
+    res.json('ok');
+  }catch(error){
+    res.status(500).json({error: "No se pudo añadir a playlist"})
+  }
+});
 
 const PORT = process.env.PORT;
 
