@@ -104,6 +104,7 @@ const PORT = process.env.PORT;
 
 await connectDB();
 await db.collection('users').createIndex({ mail: 1 }, { unique: true });
+await db.collection('songs').createIndex({ id: 1 }, { unique: true });
 await loadSongs();
 app.listen(PORT, () => {
   console.log("Vicente observando en el puerto " + PORT);
