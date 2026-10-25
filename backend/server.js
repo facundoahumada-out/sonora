@@ -90,6 +90,15 @@ app.patch('/user/preferences', checkToken, async (req,res)=> {
   }
 });
 
+app.get('/songs', async(req,res)=>{
+  try{
+    const songs=await db.collection('songs').find({isActive:true}).toArray();
+    res.json(songs);
+  }catch(error){
+    res.status(500).json({error: "No se pudieron obtener las canciones"});
+  }
+});
+
 
 const PORT = process.env.PORT;
 
