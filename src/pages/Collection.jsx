@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
-import Logo from "../components/Logo"
+import Navbar from "../components/Navbar"
+import Tabs from "../components/Tabs";
 
 const sections = [
     { id: 'playlists', name: 'Playlists'},
@@ -8,59 +9,101 @@ const sections = [
     { id: 'historial', name: 'Historial'},
 ]
 
-export default function Collection ({ user, isAdmin, onLoad }) {
+export default function Collection ({ user, isAdmin, onLoad, currentSong, setPlaying, onSelectSong, likes, onToggleLike }) {
     const [section, setSection] = useState('playlists')
+    const [playlists, setPlaylists] = useState([])
+    const [allSongs, setAllSongs] = useState([])
+    useEffect(() => {
+        if (!user) return;
+        fetch(`http://localhost:3000/user/playlists/${user}`)
+            .then(res => res.json())
+            .then(data => setPlaylists(Array.isArray(data) ? data : []))
+            .catch(() => setPlaylists([]));
+
+
+        fetch('http://localhost:3000/songs')
+            .then(res => res.json())
+            .then(data => setAllSongs(Array.isArray(data) ? data : []))
+            .catch(() => setAllSongs([]))   ;
+    }, [user]);
+
+    const createPlaylist = async () => {
+        const name = prompt("Nombre de la nueva playlist:");
+        if (!name) return;
+
+        const res = await fetch('http://localhost:3000/user/playlists', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, user_mail: user })
+        });
+
+        if (res.ok) {
+            fetch(`http://localhost:3000/user/playlists/${user}`)
+                .then(res => res.json())
+                .then(data => setPlaylists(Array.isArray(data) ? data : []));
+        }
+    };
+
+   const favoriteSongs = allSongs.filter(song => likes.includes(String(song.id)))
 
     return (
-        <div className="min-h-screen bg-white text-sm text-neutral-900">
-            <nav className="flex h-16 items-center px-6">
-                <Logo></Logo>
-                <div className="ml-auto flex items-center gap-5">
-                    <button onClick={() => onLoad('home')} className="text-neutral-500 hover:text-neutral-900">Inicio</button>
-                    <button onClick={() => onLoad('collection')} className="font-medium">Biblioteca</button>
-                    {isAdmin && (
-                        <button onClick={() => onLoad('admin')}className="text-neutral-500 hover:text-neutral-900">Admin</button>
-                    )}
-                    <button onClick={() => onLoad('profile')} className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold">
-                        {user.charAt(0).toUpperCase()}
-                    </button>
-                </div>
-            </nav>
+        <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
+            <Navbar user={user} active="collection" onLoad={onLoad}></Navbar>
 
             <main className="mx-auto w-full max-w-[720px] px-6 pt-16">
                 <h1 className="mb-6 text-2xl font-semibold tracking-tight">Tu biblioteca</h1>
 
-                <div className="mb-5 flex gap-5 border-b border-neutral-100">
-                    {sections.map((tmp) => {
-                        if (tmp.id === section) {
-                            return (
-                                <button key={tmp.id} className="border-b-2 border-neutral-900 pb-2 font-medium">{tmp.name}</button>
-                            )
-                        } else {
-                            return (
-                                <button key={tmp.id} onClick={() => setSection(tmp.id)} className="pb-2 text-neutral-400 hover:text-neutral-900">{tmp.name}</button>
-                            )
-                        }
-                    })}
-                </div>
+                <Tabs sections={sections} active={section} onChange={setSection} className="mb-5"></Tabs>
 
                 {section === 'playlists' && (
                     <div>
                         <div className="mb-5 flex flex-wrap gap-2">
-                            <button className="flex h-8 items-center gap-1.5 rounded-md border border-dashed border-neutral-300 px-3 text-neutral-500 hover:text-neutral-900">
-                                <Plus size={16} /> Nueva Playlist
+                            <button onClick={createPlaylist} className="cursor-pointer flex h-8 items-center gap-1.5 rounded-md border border-dashed border-neutral-300 px-3 text-neutral-500 hover:text-neutral-900">
+                            <Plus size={16} /> Nueva playlist
                             </button>
                         </div>
-                        <p className="py-10 text-center text-neutral-400">Renato conecta API para playlists, please.</p>
+
+                        {playlists.length === 0 ? (
+                            <p className="py-10 text-center text-neutral-400">Aún no tienes playlists.</p>
+                        ) : (
+                            <div className="grid gap-3 sm:grid-cols-2">
+                                {playlists.map((pl) => (
+                                    <div key={pl._id} className="rounded-lg border border-neutral-100 p-4 shadow-sm hover:border-neutral-200">
+                                        <p className="font-medium">{pl.name}</p>
+                                        <p className="text-xs text-neutral-400">{pl.songs?.length || 0} canciones</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
 
                 {section === 'favoritos' && (
-                    <p className="py-10 text-center text-neutral-400">Renato hacer función de favoritos, please.</p>
+                    <div>
+                        {favoriteSongs.length === 0 ? (
+                            <p className="py-10 text-center text-neutral-400">Aún no tienes canciones favoritas.</p>
+                        ) : (
+                            <div className="flex flex-col gap-1">
+                                {favoriteSongs.map((song) => (
+                                    <div 
+                                        key={song.id} 
+                                        onClick={() => { if(onSelectSong) onSelectSong(song); if(setPlaying) setPlaying(true); }}
+                                        className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50"
+                                    >
+                                        <img src={song.cover_image} alt={song.title} className="h-10 w-10 rounded-md object-cover bg-neutral-100" />
+                                        <div>
+                                            <p className="font-medium">{song.title}</p>
+                                            <p className="text-xs text-neutral-400">{song.artist_name}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 )}
 
                 {section === 'historial' && (
-                    <p className="py-10 text-center text-neutral-400">Renato hacer función de historial, please..</p>
+                    <p className="py-10 text-center text-neutral-400">Aún no has escuchado canciones.</p>
                 )}
             </main> 
         </div>

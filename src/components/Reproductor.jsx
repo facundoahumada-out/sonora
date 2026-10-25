@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, ListMusic, Volume2, Heart, ListPlus, Plus } from "lucide-react";
+import SongCover from "./SongCover";
 
-export default function Reproductor ({currentSong, playing, setPlaying}) {
+export default function Reproductor ({currentSong, playing, setPlaying, user, likes, onToggleLike}) {
     const [queue, setQueue] = useState(false)
-    const [liked, setLiked] = useState(false)
+    const liked=currentSong? likes.includes(String(currentSong.id)):false
     const [playlists, setPlaylists] = useState(false)
     const [controls, setControls] = useState(false)
     const audioRef=useRef(null);
+    const [userPlaylists, setUserPlaylists] = useState([]);
 
     useEffect(() => {
         if(!audioRef.current) return;
@@ -18,6 +20,53 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
         }
 
     },[playing,currentSong]);
+
+    useEffect(() => {
+        function handleSpace(e) {
+            if (e.code !== 'Space' || e.repeat || !currentSong) return;
+            if (e.target.closest('input, textarea, select, button, [contenteditable="true"]')) return;
+            e.preventDefault();
+            setPlaying(!playing);
+        }
+        window.addEventListener('keydown', handleSpace);
+        return () => window.removeEventListener('keydown', handleSpace);
+    }, [currentSong, playing, setPlaying]);
+
+
+    useEffect(() => {
+        if (playlists && user) {
+            fetch(`http://localhost:3000/user/playlists/${user}`)
+                .then(res => res.json())
+                .then(data => setUserPlaylists(Array.isArray(data) ? data : []));
+        }
+    }, [playlists, user]);
+
+    const addToPlaylist = async (playlistId) => {
+        if (!currentSong) return;
+        await fetch('http://localhost:3000/user/playlists/add-song', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ playlist_id: playlistId, song_id: currentSong.id })
+        });
+        setPlaylists(false);
+    };
+
+    const createPlaylist = async () => {
+        const name = prompt("Nombre de la nueva playlist:");
+        if (!name || !user) return;
+
+        const res = await fetch('http://localhost:3000/user/playlists', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, user_mail: user })
+        });
+
+        if (res.ok) {
+            fetch(`http://localhost:3000/user/playlists/${user}`)
+                .then(res => res.json())
+                .then(data => setUserPlaylists(Array.isArray(data) ? data : []));
+        }
+    };
     return (
         <div>
             <audio ref={audioRef} src={currentSong?.audio_url}/>
@@ -41,8 +90,19 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
                     <div className="fixed inset-x-2 bottom-[72px] z-30 rounded-2xl border border-neutral-100 bg-white p-2 text-sm shadow-xl md:inset-x-auto md:left-4 md:w-72 md:rounded-xl">
                         <div className="mx-auto mb-1 h-1 w-9 rounded-full bg-neutral-200 md:hidden"></div>
                         <div className="px-2 py-1.5 font-medium">Agregar a playlist</div>
-                        <button className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"><Plus size={14}></Plus>Nueva playlist</button>
-                        <p className="py-6 text-center text-neutral-400">Aún no tienes playlists.</p>
+                        <button onClick={createPlaylist} className="cursor-pointer flex w-full items-center gap-2 rounded-md px-2 py-2 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"><Plus size={14}></Plus>Nueva playlist</button>
+                        {userPlaylists.length === 0 ? (
+                            <p className="py-6 text-center text-neutral-400">Aún no tienes playlists.</p>
+                        ) : (
+                            <div className="mt-1 flex flex-col gap-1 max-h-48 overflow-y-auto">
+                                {userPlaylists.map(pl => (
+                                    <button key={pl._id} onClick={() => addToPlaylist(pl._id)} className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left hover:bg-neutral-50">
+                                        <span className="font-medium">{pl.name}</span>
+                                        <span className="text-xs text-neutral-400">{pl.songs?.length || 0} p.</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -54,7 +114,7 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
                         <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-neutral-200"></div>
                         <p className="text-center font-medium">{currentSong? currentSong.title: "Nada sonando"}</p>
                         
-                        <p className="text-center text-xs text-neutral-400">Elige una canción</p>
+                        <p className="text-center text-xs text-neutral-400">{currentSong ? currentSong.artist_name : "Elige una canción"}</p>
                         <div className="mt-4 flex items-center gap-2 text-[10px] text-neutral-400">
                             <span>0:00</span>
                             <div className="h-1 flex-1 rounded-full bg-neutral-100">
@@ -63,18 +123,18 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
                             <span>0:00</span>
                         </div>
                         <div className="mt-4 flex items-center justify-between px-4">
-                            <button className="text-neutral-400"><Shuffle size={14}></Shuffle></button>
-                            <button><SkipBack size={14} fill="currentColor"></SkipBack></button>
+                            <button aria-label="Reproducción aleatoria" className="cursor-pointer text-neutral-400"><Shuffle size={14}></Shuffle></button>
+                            <button aria-label="Canción anterior" className="cursor-pointer"><SkipBack size={14} fill="currentColor"></SkipBack></button>
 
                             {playing && (
-                                <button onClick={() => setPlaying(false)} className="flex h-12 w-12 items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
+                                <button aria-label="Pausar" onClick={() => setPlaying(false)} className="cursor-pointer flex h-12 w-12 items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
                             )}
                             {!playing && (
-                                <button onClick={() => setPlaying(true)} className="flex h-12 w-12 items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
+                                <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="cursor-pointer flex h-12 w-12 items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
                             )}
 
-                            <button><SkipForward size={14} fill="currentColor"></SkipForward></button>
-                            <button className="text-neutral-400"><Repeat size={14}></Repeat></button>
+                            <button aria-label="Canción siguiente" className="cursor-pointer"><SkipForward size={14} fill="currentColor"></SkipForward></button>
+                            <button aria-label="Repetir" className="cursor-pointer text-neutral-400"><Repeat size={14}></Repeat></button>
                         </div>
                     </div>
                 </div>
@@ -86,39 +146,43 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
                 </div>
 
                 <div className="flex flex-1 items-center gap-3">
-                    <div className="h-10 w-10 rounded-md bg-neutral-100"></div>
-                    <button onClick={() => {setControls(true); setQueue(false); setPlaylists(false)}} className="text-left md:pointer-events-none">
-                        <p className="font-medium">{currentSong ? currentSong.title: "Nada playing"}</p>
-                        <p className="text-xs text-neutral-400">Elige una canción</p>
+                    {currentSong ? (
+                        <SongCover song={currentSong}></SongCover>
+                    ) : (
+                        <div className="h-10 w-10 rounded-md bg-neutral-100"></div>
+                    )}
+                    <button onClick={() => {setControls(true); setQueue(false); setPlaylists(false)}} className="cursor-pointer text-left md:pointer-events-none">
+                        <p className="font-medium">{currentSong ? currentSong.title: "Nada sonando"}</p>
+                        <p className="text-xs text-neutral-400">{currentSong ? currentSong.artist_name : "Elige una canción"}</p>
                     </button>
 
                     {liked && (
-                        <button onClick={() => setLiked(false)} className="ml-2 text-red-400"><Heart size={14} fill="currentColor"></Heart></button>
+                        <button aria-label="Quitar de favoritos" onClick={() => currentSong&&onToggleLike(currentSong.id)} className="cursor-pointer ml-2 text-red-400"><Heart size={14} fill="currentColor"></Heart></button>
                     )}
                     {!liked && (
-                        <button onClick={() => setLiked(true)} className="ml-2 text-neutral-400 hover:text-red-400"><Heart size={14}></Heart></button>
+                        <button aria-label="Agregar a favoritos" onClick={() => currentSong&&onToggleLike(currentSong.id)} className="cursor-pointer ml-2 text-neutral-400 hover:text-red-400"><Heart size={14}></Heart></button>
                     )}
                     
                     {playlists && (
-                        <button onClick={() => setPlaylists(false)} className="flex h-7 w-7 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListPlus size={14}></ListPlus></button>
+                        <button aria-label="Cerrar panel de playlists" onClick={() => setPlaylists(false)} className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListPlus size={14}></ListPlus></button>
                     )}
                     {!playlists && (
-                        <button onClick={() => { setPlaylists(true); setQueue(false); setControls(false) }} className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:text-neutral-900"><ListPlus size={14}></ListPlus></button>
+                        <button aria-label="Agregar a playlist" onClick={() => { setPlaylists(true); setQueue(false); setControls(false) }} className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:text-neutral-900"><ListPlus size={14}></ListPlus></button>
                     )}
                 </div>
 
                 <div className="hidden flex-[2] flex-col items-center gap-1 md:flex">
                     <div className="flex items-center gap-5">
-                        <button className="text-neutral-400 hover:text-neutral-900"><Shuffle size={14}></Shuffle></button>
-                        <button className="hover:text-neutral-600"><SkipBack size={14} fill="currentColor"></SkipBack></button>
+                        <button aria-label="Reproducción aleatoria" className="cursor-pointer text-neutral-400 hover:text-neutral-900"><Shuffle size={14}></Shuffle></button>
+                        <button aria-label="Canción anterior" className="cursor-pointer hover:text-neutral-600"><SkipBack size={14} fill="currentColor"></SkipBack></button>
                         {playing && (
-                            <button onClick={() => setPlaying(false)} className="flex items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
+                            <button aria-label="Pausar" onClick={() => setPlaying(false)} className="cursor-pointer flex items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
                         )}
                         {!playing && (
-                            <button onClick={() => setPlaying(true)} className="flex items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
+                            <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="cursor-pointer flex items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
                         )}
-                        <button className="hover:text-neutral-600"><SkipForward size={14} fill="currentColor"></SkipForward></button>
-                        <button className="text-neutral-400 hover:text-neutral-900"><Repeat size={14}></Repeat></button>
+                        <button aria-label="Canción siguiente" className="cursor-pointer hover:text-neutral-600"><SkipForward size={14} fill="currentColor"></SkipForward></button>
+                        <button aria-label="Repetir" className="cursor-pointer text-neutral-400 hover:text-neutral-900"><Repeat size={14}></Repeat></button>
                     </div>
 
                     <div className="flex w-full max-w-[420px] items-center gap-2 text-[10px] text-neutral-400">
@@ -132,20 +196,20 @@ export default function Reproductor ({currentSong, playing, setPlaying}) {
 
                 <div className="flex flex-1 items-center justify-end gap-3 text-neutral-400">
                     {queue && (
-                        <button onClick={() => setQueue(false)} className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListMusic size={14}></ListMusic></button>
+                        <button aria-label="Cerrar cola de reproducción" onClick={() => setQueue(false)} className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListMusic size={14}></ListMusic></button>
                     )}
                     {!queue && (
-                        <button onClick={() => { setQueue(true); setPlaylists(false); setControls(false) }} className="flex h-8 w-8 items-center justify-center rounded-md hover:text-neutral-900"><ListMusic size={14}></ListMusic></button>
+                        <button aria-label="Ver cola de reproducción" onClick={() => { setQueue(true); setPlaylists(false); setControls(false) }} className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-md hover:text-neutral-900"><ListMusic size={14}></ListMusic></button>
                     )}
                     <div className="hidden items-center gap-2 md:flex">
                         <Volume2 size={14}></Volume2>
-                        <input type="range" min="0" max="100" defaultValue="70" className="w-24 accent-neutral-900" />
+                        <input aria-label="Volumen" type="range" min="0" max="100" defaultValue="70" className="w-24 accent-neutral-900" />
                     </div>
                     {playing && (
-                        <button onClick={() => setPlaying(false)} className="flex h-9 w-9 items-center justify-center text-neutral-900 md:hidden"><Pause size={16} fill="currentColor"></Pause></button>
+                        <button aria-label="Pausar" onClick={() => setPlaying(false)} className="cursor-pointer flex h-9 w-9 items-center justify-center text-neutral-900 md:hidden"><Pause size={16} fill="currentColor"></Pause></button>
                     )}
                     {!playing && (
-                        <button onClick={() => setPlaying(true)} className="flex h-9 w-9 items-center justify-center text-neutral-900 md:hidden"><Play size={16} fill="currentColor"></Play></button>
+                        <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="cursor-pointer flex h-9 w-9 items-center justify-center text-neutral-900 md:hidden"><Play size={16} fill="currentColor"></Play></button>
                     )}
                 </div>
             </div>
