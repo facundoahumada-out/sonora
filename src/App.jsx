@@ -18,6 +18,38 @@ export default function App() {
   const [playing, setPlaying]=useState(false);
   const [termsFrom, setTermsFrom] = useState('landing')
   const [likes, setLikes] = useState([])
+  const [history, setHistory] = useState([])
+  const [playList, setPlayList] = useState([])
+  const [position, setPosition] = useState(0)
+  const queue = playList.slice(position + 1)
+
+  function startSong(song) {
+    setCurrentSong(song)
+    setPlaying(true)
+    setHistory(prev => [{ song: song, playedAt: new Date() }, ...prev].slice(0, 50))
+  }
+
+  function playSong(song, list) {
+    startSong(song)
+    setPlayList(list)
+    setPosition(list.findIndex(tmp => tmp.id === song.id))
+  }
+
+  function playNext() {
+    if (position + 1 < playList.length) {
+      startSong(playList[position + 1])
+      setPosition(position + 1)
+    } else {
+      setPlaying(false)
+    }
+  }
+
+  function playPrevious() {
+    if (position > 0) {
+      startSong(playList[position - 1])
+      setPosition(position - 1)
+    }
+  }
 
   useEffect(() => {
     if (!user) {
@@ -74,6 +106,9 @@ export default function App() {
     setIsAdmin(false)
     setCurrentSong(null)
     setPlaying(false)
+    setHistory([])
+    setPlayList([])
+    setPosition(0)
     setPage('landing')
   }
 
@@ -105,9 +140,9 @@ export default function App() {
 
   let content
   if (page === 'home') {
-    content = <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} currentSong={currentSong} setCurrentSong={setCurrentSong} setPlaying={setPlaying} likes={likes} onToggleLike={toggleLike}></Home>
+    content = <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} currentSong={currentSong} onPlaySong={playSong} history={history} likes={likes} onToggleLike={toggleLike}></Home>
   } else if (page === 'collection') {
-    content = <Collection user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} currentSong={currentSong} onSelectSong={setCurrentSong} setPlaying={setPlaying} likes={likes} onToggleLike={toggleLike}></Collection>
+    content = <Collection user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} currentSong={currentSong} onPlaySong={playSong} history={history} likes={likes} onToggleLike={toggleLike}></Collection>
   } else if (page === 'profile') {
     content = <Profile user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} onLogout={logout}></Profile>
   }
@@ -116,7 +151,7 @@ export default function App() {
     return (
       <div>
         {content}
-        <Reproductor currentSong={currentSong} playing={playing} setPlaying={setPlaying} user={user} likes={likes} onToggleLike={toggleLike}></Reproductor>
+        <Reproductor currentSong={currentSong} playing={playing} setPlaying={setPlaying} user={user} likes={likes} onToggleLike={toggleLike} queueSongs={queue} onPlaySong={playSong} onNext={playNext} onPrevious={playPrevious} hasPrevious={position > 0}></Reproductor>
       </div>
     )
   }

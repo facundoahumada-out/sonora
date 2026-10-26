@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, ListMusic, Volume2, VolumeX, Heart, ListPlus, Plus } from "lucide-react";
 import SongCover from "./SongCover";
+import SongRow from "./SongRow";
 import { toList, songCount } from "../utils";
 
-export default function Reproductor ({currentSong, playing, setPlaying, user, likes, onToggleLike}) {
+export default function Reproductor ({currentSong, playing, setPlaying, user, likes, onToggleLike, queueSongs, onPlaySong, onNext, onPrevious, hasPrevious}) {
     const [queue, setQueue] = useState(false)
     let liked = false
     let title = 'Nada sonando'
@@ -14,6 +15,20 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
         title = currentSong.title
         artist = currentSong.artist_name
         audioUrl = currentSong.audio_url
+    }
+
+    let queueText = queueSongs.length + ' canciones'
+    if (queueSongs.length === 1) {
+        queueText = '1 canción'
+    }
+
+    function previous() {
+        if (time > 3 || !hasPrevious) {
+            audioRef.current.currentTime = 0
+            setTime(0)
+        } else {
+            onPrevious()
+        }
     }
     const [playlists, setPlaylists] = useState(false)
     const [controls, setControls] = useState(false)
@@ -141,7 +156,7 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
     };
     return (
         <div>
-            <audio ref={audioRef} src={audioUrl}onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)} onEnded={() => setPlaying(false)}/>
+            <audio ref={audioRef} src={audioUrl}onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)} onEnded={onNext}/>
             {queue && (
                 <div>
                     <div onClick={() => setQueue(false)} className="fixed inset-0 z-20 bg-black/20 md:hidden"></div>
@@ -149,9 +164,18 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                         <div className="mx-auto mb-1 h-1 w-9 rounded-full bg-neutral-200 md:hidden"></div>
                         <div className="flex items-center justify-between px-2 py-1.5">
                             <span className="font-medium">A continuación</span>
-                            <span className="text-xs text-neutral-400">0 canciones</span>
+                            <span className="text-xs text-neutral-400">{queueText}</span>
                         </div>
-                        <p className="py-8 text-center text-neutral-400">La cola está vacía.</p>
+                        {queueSongs.length === 0 && (
+                            <p className="py-8 text-center text-neutral-400">La cola está vacía.</p>
+                        )}
+                        {queueSongs.length > 0 && (
+                            <div className="max-h-72 overflow-y-auto">
+                                {queueSongs.map((tmp) => (
+                                    <SongRow key={tmp.id} song={tmp} active={false} onPlay={() => onPlaySong(tmp, queueSongs)}></SongRow>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -195,7 +219,7 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                         </div>
                         <div className="mt-4 flex items-center justify-between px-4">
                             <button aria-label="Reproducción aleatoria" className="cursor-pointer text-neutral-400"><Shuffle size={14}></Shuffle></button>
-                            <button aria-label="Canción anterior" className="cursor-pointer"><SkipBack size={14} fill="currentColor"></SkipBack></button>
+                            <button aria-label="Canción anterior" onClick={previous} disabled={!currentSong} className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"><SkipBack size={14} fill="currentColor"></SkipBack></button>
 
                             {playing && (
                                 <button aria-label="Pausar" onClick={() => setPlaying(false)} className="cursor-pointer flex h-12 w-12 items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
@@ -204,7 +228,7 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                                 <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="cursor-pointer flex h-12 w-12 items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
                             )}
 
-                            <button aria-label="Canción siguiente" className="cursor-pointer"><SkipForward size={14} fill="currentColor"></SkipForward></button>
+                            <button aria-label="Canción siguiente" onClick={onNext} disabled={queueSongs.length === 0} className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"><SkipForward size={14} fill="currentColor"></SkipForward></button>
                             <button aria-label="Repetir" className="cursor-pointer text-neutral-400"><Repeat size={14}></Repeat></button>
                         </div>
                     </div>
@@ -246,14 +270,14 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                 <div className="hidden flex-[2] flex-col items-center gap-1 md:flex">
                     <div className="flex items-center gap-5">
                         <button aria-label="Reproducción aleatoria" className="cursor-pointer text-neutral-400 hover:text-neutral-900"><Shuffle size={14}></Shuffle></button>
-                        <button aria-label="Canción anterior" className="cursor-pointer hover:text-neutral-600"><SkipBack size={14} fill="currentColor"></SkipBack></button>
+                        <button aria-label="Canción anterior" onClick={previous} disabled={!currentSong} className="cursor-pointer hover:text-neutral-600 disabled:cursor-not-allowed disabled:opacity-50"><SkipBack size={14} fill="currentColor"></SkipBack></button>
                         {playing && (
                             <button aria-label="Pausar" onClick={() => setPlaying(false)} className="cursor-pointer flex items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
                         )}
                         {!playing && (
                             <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="cursor-pointer flex items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
                         )}
-                        <button aria-label="Canción siguiente" className="cursor-pointer hover:text-neutral-600"><SkipForward size={14} fill="currentColor"></SkipForward></button>
+                        <button aria-label="Canción siguiente" onClick={onNext} disabled={queueSongs.length === 0} className="cursor-pointer hover:text-neutral-600 disabled:cursor-not-allowed disabled:opacity-50"><SkipForward size={14} fill="currentColor"></SkipForward></button>
                         <button aria-label="Repetir" className="cursor-pointer text-neutral-400 hover:text-neutral-900"><Repeat size={14}></Repeat></button>
                     </div>
 

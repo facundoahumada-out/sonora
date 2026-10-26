@@ -11,7 +11,7 @@ const sections = [
     { id: 'reciente', name: 'Recientes'},
 ]
 
-export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSong, setPlaying, likes, onToggleLike }) {
+export default function Home ({ user, isAdmin, onLoad, currentSong, onPlaySong, history, likes, onToggleLike }) {
     const [section, setSection] = useState('busqueda')
     const [songs, setSongs]= useState([]);
     const [loading, setLoading] = useState(true);
@@ -33,9 +33,18 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
     const trending = [...songs].sort((a, b) => b.plays - a.plays).slice(0, 20);
     const newest = songs.filter((tmp) => tmp.release_date).sort((a, b) => b.release_date.localeCompare(a.release_date)).slice(0, 20);
 
-    function play(song) {
-        setCurrentSong(song);
-        setPlaying(true);
+    const recent = [];
+    for (const item of history) {
+        if (!recent.some((tmp) => tmp.id === item.song.id)) {
+            recent.push(item.song);
+        }
+        if (recent.length === 10) {
+            break;
+        }
+    }
+
+    function play(song, list) {
+        onPlaySong(song, list);
     }
 
     function isCurrent(song) {
@@ -87,23 +96,26 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
                         likeFill = 'currentColor';
                     }
                     return (
-                        <SongRow key={tmp.id} song={tmp} subtitle={tmp.artist_name + ' · ' + tmp.album_name} active={isCurrent(tmp)} onPlay={() => play(tmp)}>
+                        <SongRow key={tmp.id} song={tmp} subtitle={tmp.artist_name + ' · ' + tmp.album_name} active={isCurrent(tmp)} onPlay={() => play(tmp, songs)}>
                         <button onClick={(e) => { e.stopPropagation(); onToggleLike(tmp.id) }} aria-label={likeLabel} aria-pressed={isLiked} className={likeClass}><Heart size={16} fill={likeFill}></Heart></button>
                         </SongRow>);
                 })}
                 {section === 'tendencias' && trending.map((tmp) => (
-                    <SongRow key={tmp.id} song={tmp} active={isCurrent(tmp)} onPlay={() => play(tmp)}>
+                    <SongRow key={tmp.id} song={tmp} active={isCurrent(tmp)} onPlay={() => play(tmp, trending)}>
                         <div>{playsText(tmp.plays)}</div>
                     </SongRow>
                 ))}
                 {section === 'novedades' && newest.map((tmp) => (
-                    <SongRow key={tmp.id} song={tmp} active={isCurrent(tmp)} onPlay={() => play(tmp)}>
+                    <SongRow key={tmp.id} song={tmp} active={isCurrent(tmp)} onPlay={() => play(tmp, newest)}>
                         <div>{new Date(tmp.release_date + 'T00:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                     </SongRow>
                 ))}
-                {section === 'reciente' && (
+                {section === 'reciente' && recent.length === 0 && (
                     <p className="py-10 text-center text-neutral-400">Aún no has escuchado canciones.</p>
                 )}
+                {section === 'reciente' && recent.map((tmp) => (
+                    <SongRow key={tmp.id} song={tmp} active={isCurrent(tmp)} onPlay={() => play(tmp, recent)}></SongRow>
+                ))}
             </main>
         </div>
     )

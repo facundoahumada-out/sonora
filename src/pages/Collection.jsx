@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import Navbar from "../components/Navbar"
 import Tabs from "../components/Tabs";
+import SongRow from "../components/SongRow";
 import { toList, songCount } from "../utils";
 
 const sections = [
@@ -10,7 +11,7 @@ const sections = [
     { id: 'historial', name: 'Historial'},
 ]
 
-export default function Collection ({ user, isAdmin, onLoad, currentSong, setPlaying, onSelectSong, likes, onToggleLike }) {
+export default function Collection ({ user, isAdmin, onLoad, currentSong, onPlaySong, history, likes, onToggleLike }) {
     const [section, setSection] = useState('playlists')
     const [playlists, setPlaylists] = useState([])
     const [allSongs, setAllSongs] = useState([])
@@ -46,6 +47,17 @@ export default function Collection ({ user, isAdmin, onLoad, currentSong, setPla
     };
 
    const favoriteSongs = allSongs.filter(song => likes.includes(String(song.id)))
+
+    function isCurrent(song) {
+        if (currentSong) {
+            return currentSong.id === song.id;
+        }
+        return false;
+    }
+
+    function playedTime(date) {
+        return date.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+    }
 
     return (
         <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
@@ -88,26 +100,21 @@ export default function Collection ({ user, isAdmin, onLoad, currentSong, setPla
                         {favoriteSongs.length > 0 && (
                             <div className="flex flex-col gap-1">
                                 {favoriteSongs.map((song) => (
-                                    <div 
-                                        key={song.id} 
-                                        onClick={() => { if(onSelectSong) onSelectSong(song); if(setPlaying) setPlaying(true); }}
-                                        className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-neutral-50"
-                                    >
-                                        <img src={song.cover_image} alt={song.title} className="h-10 w-10 rounded-md object-cover bg-neutral-100" />
-                                        <div>
-                                            <p className="font-medium">{song.title}</p>
-                                            <p className="text-xs text-neutral-400">{song.artist_name}</p>
-                                        </div>
-                                    </div>
+                                    <SongRow key={song.id} song={song} active={isCurrent(song)} onPlay={() => onPlaySong(song, favoriteSongs)}></SongRow>
                                 ))}
                             </div>
                         )}
                     </div>
                 )}
 
-                {section === 'historial' && (
+                {section === 'historial' && history.length === 0 && (
                     <p className="py-10 text-center text-neutral-400">Aún no has escuchado canciones.</p>
                 )}
+                {section === 'historial' && history.map((item) => (
+                    <SongRow key={item.playedAt.getTime() + '-' + item.song.id} song={item.song} active={isCurrent(item.song)} onPlay={() => onPlaySong(item.song, [item.song])}>
+                        <div>{playedTime(item.playedAt)}</div>
+                    </SongRow>
+                ))}
             </main> 
         </div>
     )
