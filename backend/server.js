@@ -153,6 +153,15 @@ app.post('/user/playlists/add-song', async (req, res) => {
   }
 });
 
+app.post('/user/playlists/remove-song', async (req, res) => {
+  try{
+    await db.collection('playlists').updateOne({ _id: req.body.playlist_id }, { $pull: { songs: req.body.song_id } });
+    res.json('ok');
+  }catch(error){
+    res.status(500).json({error: "No se pudo eliminar de playlist"})
+  }
+});
+
 const PORT = process.env.PORT;
 
 await connectDB();

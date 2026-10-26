@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, ListMusic, Volume2, VolumeX, Heart, ListPlus, Plus } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, ListMusic, Volume2, VolumeX, Heart, ListPlus } from "lucide-react";
 import SongCover from "./SongCover";
 import SongRow from "./SongRow";
-import { toList, songCount } from "../utils";
+import { songCountText } from "../utils";
 
-export default function Reproductor ({currentSong, playing, setPlaying, user, likes, onToggleLike, queueSongs, onPlaySong, onNext, onPrevious, hasPrevious}) {
+export default function Reproductor ({currentSong, playing, setPlaying, user, likes, onToggleLike, queueSongs, onPlaySong, onNext, onPrevious, hasPrevious, playlists, reloadPlaylists}) {
     const [queue, setQueue] = useState(false)
     let liked = false
     let title = 'Nada sonando'
@@ -30,10 +30,9 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
             onPrevious()
         }
     }
-    const [playlists, setPlaylists] = useState(false)
+    const [showPlaylists, setShowPlaylists] = useState(false)
     const [controls, setControls] = useState(false)
     const audioRef=useRef(null);
-    const [userPlaylists, setUserPlaylists] = useState([]);
     const [time, setTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(70);
@@ -119,15 +118,6 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
         return () => window.removeEventListener('keydown', handleSpace);
     }, [currentSong, playing, setPlaying]);
 
-
-    useEffect(() => {
-        if (playlists && user) {
-            fetch(`http://localhost:3000/user/playlists/${user}`)
-                .then(res => res.json())
-                .then(data => setUserPlaylists(toList(data)));
-        }
-    }, [playlists, user]);
-
     const addToPlaylist = async (playlistId) => {
         if (!currentSong) return;
         await fetch('http://localhost:3000/user/playlists/add-song', {
@@ -135,28 +125,12 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ playlist_id: playlistId, song_id: currentSong.id })
         });
-        setPlaylists(false);
-    };
-
-    const createPlaylist = async () => {
-        const name = prompt("Nombre de la nueva playlist:");
-        if (!name || !user) return;
-
-        const res = await fetch('http://localhost:3000/user/playlists', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, user_mail: user })
-        });
-
-        if (res.ok) {
-            fetch(`http://localhost:3000/user/playlists/${user}`)
-                .then(res => res.json())
-                .then(data => setUserPlaylists(toList(data)));
-        }
+        reloadPlaylists();
+        setShowPlaylists(false);
     };
     return (
         <div>
-            <audio ref={audioRef} src={audioUrl}onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)} onEnded={onNext}/>
+            <audio ref={audioRef} src={audioUrl} onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)} onEnded={onNext}/>
             {queue && (
                 <div>
                     <div onClick={() => setQueue(false)} className="fixed inset-0 z-20 bg-black/20 md:hidden"></div>
@@ -180,22 +154,21 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                 </div>
             )}
 
-            {playlists && (
+            {showPlaylists && (
                 <div>
-                    <div onClick={() => setPlaylists(false)} className="fixed inset-0 z-20 bg-black/20 md:hidden"></div>
+                    <div onClick={() => setShowPlaylists(false)} className="fixed inset-0 z-20 bg-black/20 md:hidden"></div>
                     <div className="fixed inset-x-2 bottom-[72px] z-30 rounded-2xl border border-neutral-100 bg-white p-2 text-sm shadow-xl md:inset-x-auto md:left-4 md:w-72 md:rounded-xl">
                         <div className="mx-auto mb-1 h-1 w-9 rounded-full bg-neutral-200 md:hidden"></div>
                         <div className="px-2 py-1.5 font-medium">Agregar a playlist</div>
-                        <button onClick={createPlaylist} className="cursor-pointer flex w-full items-center gap-2 rounded-md px-2 py-2 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900"><Plus size={14}></Plus>Nueva playlist</button>
-                        {userPlaylists.length === 0 && (
-                            <p className="py-6 text-center text-neutral-400">Aún no tienes playlists.</p>
+                        {playlists.length === 0 && (
+                            <p className="px-2 py-6 text-center text-neutral-400">Aún no tienes playlists. Crea una en tu Biblioteca.</p>
                         )}
-                        {userPlaylists.length > 0 && (
+                        {playlists.length > 0 && (
                             <div className="mt-1 flex flex-col gap-1 max-h-48 overflow-y-auto">
-                                {userPlaylists.map(pl => (
-                                    <button key={pl._id} onClick={() => addToPlaylist(pl._id)} className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left hover:bg-neutral-50">
+                                {playlists.map(pl => (
+                                    <button key={pl._id} onClick={() => addToPlaylist(pl._id)} className="cursor-pointer flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left hover:bg-neutral-50">
                                         <span className="font-medium">{pl.name}</span>
-                                        <span className="text-xs text-neutral-400">{songCount(pl)} p.</span>
+                                        <span className="text-xs text-neutral-400">{songCountText(pl)}</span>
                                     </button>
                                 ))}
                             </div>
@@ -247,7 +220,7 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                     {!currentSong && (
                         <div className="h-10 w-10 rounded-md bg-neutral-100"></div>
                     )}
-                    <button onClick={() => {setControls(true); setQueue(false); setPlaylists(false)}} className="cursor-pointer text-left md:pointer-events-none">
+                    <button onClick={() => {setControls(true); setQueue(false); setShowPlaylists(false)}} className="cursor-pointer text-left md:pointer-events-none">
                         <p className="font-medium">{title}</p>
                         <p className="text-xs text-neutral-400">{artist}</p>
                     </button>
@@ -259,11 +232,11 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                         <button aria-label="Agregar a favoritos" onClick={() => currentSong&&onToggleLike(currentSong.id)} className="cursor-pointer ml-2 text-neutral-400 hover:text-red-400"><Heart size={14}></Heart></button>
                     )}
                     
-                    {playlists && (
-                        <button aria-label="Cerrar panel de playlists" onClick={() => setPlaylists(false)} className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListPlus size={14}></ListPlus></button>
+                    {showPlaylists && (
+                        <button aria-label="Cerrar panel de playlists" onClick={() => setShowPlaylists(false)} className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListPlus size={14}></ListPlus></button>
                     )}
-                    {!playlists && (
-                        <button aria-label="Agregar a playlist" onClick={() => { setPlaylists(true); setQueue(false); setControls(false) }} className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:text-neutral-900"><ListPlus size={14}></ListPlus></button>
+                    {!showPlaylists && (
+                        <button aria-label="Agregar a playlist" onClick={() => { setShowPlaylists(true); setQueue(false); setControls(false) }} className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-md text-neutral-400 hover:text-neutral-900"><ListPlus size={14}></ListPlus></button>
                     )}
                 </div>
 
@@ -293,7 +266,7 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                         <button aria-label="Cerrar cola de reproducción" onClick={() => setQueue(false)} className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-900"><ListMusic size={14}></ListMusic></button>
                     )}
                     {!queue && (
-                        <button aria-label="Ver cola de reproducción" onClick={() => { setQueue(true); setPlaylists(false); setControls(false) }} className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-md hover:text-neutral-900"><ListMusic size={14}></ListMusic></button>
+                        <button aria-label="Ver cola de reproducción" onClick={() => { setQueue(true); setShowPlaylists(false); setControls(false) }} className="cursor-pointer flex h-8 w-8 items-center justify-center rounded-md hover:text-neutral-900"><ListMusic size={14}></ListMusic></button>
                     )}
                     <div className="hidden items-center gap-2 md:flex">
                         <button aria-label={muteLabel} onClick={toggleMute} className="cursor-pointer hover:text-neutral-900">

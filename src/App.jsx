@@ -18,6 +18,7 @@ export default function App() {
   const [playing, setPlaying]=useState(false);
   const [termsFrom, setTermsFrom] = useState('landing')
   const [likes, setLikes] = useState([])
+  const [playlists, setPlaylists] = useState([])
   const [history, setHistory] = useState([])
   const [playList, setPlayList] = useState([])
   const [position, setPosition] = useState(0)
@@ -112,6 +113,14 @@ export default function App() {
     setPage('landing')
   }
 
+function loadPlaylists() {
+  fetch(`http://localhost:3000/user/playlists/${user}`)
+    .then(res => res.json())
+    .then(data => setPlaylists(toList(data)))
+}
+
+useEffect(() => { if (user) loadPlaylists(); else setPlaylists([]) }, [user])
+
   if (page === 'welcome') {
     return (
       <Welcome user={user} isNew={isNew} onContinue={(genre) => {setIsNew(false); setPage('home')}}></Welcome>
@@ -142,7 +151,7 @@ export default function App() {
   if (page === 'home') {
     content = <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} currentSong={currentSong} onPlaySong={playSong} history={history} likes={likes} onToggleLike={toggleLike}></Home>
   } else if (page === 'collection') {
-    content = <Collection user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} currentSong={currentSong} onPlaySong={playSong} history={history} likes={likes} onToggleLike={toggleLike}></Collection>
+    content = <Collection user={user} isAdmin={isAdmin} playlists={playlists} reloadPlaylists={loadPlaylists} onLoad={(p) => setPage(p)} currentSong={currentSong} onPlaySong={playSong} history={history} likes={likes}></Collection>
   } else if (page === 'profile') {
     content = <Profile user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} onLogout={logout}></Profile>
   }
@@ -151,7 +160,7 @@ export default function App() {
     return (
       <div>
         {content}
-        <Reproductor currentSong={currentSong} playing={playing} setPlaying={setPlaying} user={user} likes={likes} onToggleLike={toggleLike} queueSongs={queue} onPlaySong={playSong} onNext={playNext} onPrevious={playPrevious} hasPrevious={position > 0}></Reproductor>
+        <Reproductor currentSong={currentSong} playing={playing} setPlaying={setPlaying} user={user} likes={likes} onToggleLike={toggleLike} queueSongs={queue} onPlaySong={playSong} onNext={playNext} onPrevious={playPrevious} hasPrevious={position > 0} playlists={playlists} reloadPlaylists={loadPlaylists}></Reproductor>
       </div>
     )
   }

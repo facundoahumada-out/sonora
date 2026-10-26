@@ -12,3 +12,11 @@ export function songCount(playlist) {
     }
     return 0
 }
+
+export function songCountText(playlist) {
+    const count = songCount(playlist)
+    if (count === 1) {
+        return '1 canción'
+    }
+    return count + ' canciones'
+}
