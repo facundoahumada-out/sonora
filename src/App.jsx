@@ -17,6 +17,7 @@ export default function App() {
   const [playing, setPlaying]=useState(false);
   const [termsFrom, setTermsFrom] = useState('landing')
   const [likes, setLikes] = useState([])
+  const [playlists, setPlaylists] = useState([])
 
   useEffect(() => {
     if (!user) {
@@ -62,6 +63,14 @@ export default function App() {
     setPage('landing')
   }
 
+function loadPlaylists() {
+  fetch(`http://localhost:3000/user/playlists/${user}`)
+    .then(res => res.json())
+    .then(data => setPlaylists(Array.isArray(data) ? data : []))
+}
+
+useEffect(() => { if (user) loadPlaylists(); else setPlaylists([]) }, [user])
+
   if (page === 'welcome') {
     return (
       <Welcome user={user} isNew={isNew} onContinue={(genre) => {setIsNew(false); setPage('home')}}></Welcome>
@@ -92,7 +101,7 @@ export default function App() {
   if (page === 'home') {
     content = <Home user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} currentSong={currentSong} setCurrentSong={setCurrentSong} setPlaying={setPlaying} likes={likes} onToggleLike={toggleLike}></Home>
   } else if (page === 'collection') {
-    content = <Collection user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} currentSong={currentSong} onSelectSong={setCurrentSong} setPlaying={setPlaying} likes={likes} onToggleLike={toggleLike}></Collection>
+    content = <Collection user={user} isAdmin={isAdmin} playlists={playlists} reloadPlaylists={loadPlaylists} onLoad={(p) => setPage(p)} currentSong={currentSong} onSelectSong={setCurrentSong} setPlaying={setPlaying} likes={likes} onToggleLike={toggleLike}></Collection>
   } else if (page === 'profile') {
     content = <Profile user={user} isAdmin={isAdmin} onLoad={(p) => setPage(p)} onLogout={logout}></Profile>
   }
@@ -101,7 +110,7 @@ export default function App() {
     return (
       <div>
         {content}
-        <Reproductor currentSong={currentSong} playing={playing} setPlaying={setPlaying} user={user} likes={likes} onToggleLike={toggleLike}></Reproductor>
+        <Reproductor currentSong={currentSong} playing={playing} setPlaying={setPlaying} user={user} likes={likes} onToggleLike={toggleLike} playlists={playlists} reloadPlaylists={loadPlaylists}></Reproductor>
       </div>
     )
   }
