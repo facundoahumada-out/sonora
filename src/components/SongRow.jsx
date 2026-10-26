@@ -1,6 +1,11 @@
 import SongCover from "./SongCover";
 
 export default function SongRow({ song, subtitle, active, onPlay, children }) {
+    let shownSubtitle = song.artist_name
+    if (subtitle) {
+        shownSubtitle = subtitle
+    }
+
     function playWithKeyboard(e) {
         if (e.target === e.currentTarget && e.key === 'Enter') {
             e.preventDefault();
@@ -13,7 +18,7 @@ export default function SongRow({ song, subtitle, active, onPlay, children }) {
             <SongCover song={song} playable active={active}></SongCover>
             <div>
                 <p className="font-medium">{song.title}</p>
-                <p className="text-xs text-neutral-400">{subtitle ?? song.artist_name}</p>
+                <p className="text-xs text-neutral-400">{shownSubtitle}</p>
             </div>
             <div className="ml-auto flex items-center gap-1 text-neutral-400">
                 {children}

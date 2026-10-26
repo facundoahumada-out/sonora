@@ -7,6 +7,7 @@ import Collection from "./pages/Collection"
 import Reproductor from "./components/Reproductor";
 import Profile from "./pages/Profile";
 import Terms from "./pages/Terms";
+import { toList } from "./utils";
 
 export default function App() {
   const [page, setPage] = useState('landing')
@@ -25,7 +26,7 @@ export default function App() {
     }
     fetch(`http://localhost:3000/user/likes/${user}`)
       .then(res => res.json())
-      .then(data => setLikes(Array.isArray(data) ? data.map(item => String(item.song_id)) : []))
+      .then(data => setLikes(toList(data).map(item => String(item.song_id))))
       .catch(() => setLikes([]))
   }, [user])
 
@@ -33,12 +34,26 @@ export default function App() {
     if (!user) return
     const id = String(songId)
     const isLiked = likes.includes(id)
-    setLikes(prev => isLiked ? prev.filter(tmp => tmp !== id) : [...prev, id])
+    let method = 'POST'
+    if (isLiked) {
+      method = 'DELETE'
+      setLikes(prev => prev.filter(tmp => tmp !== id))
+    } else {
+      setLikes(prev => [...prev, id])
+    }
     await fetch('http://localhost:3000/user/likes', {
-      method: isLiked ? 'DELETE' : 'POST',
+      method: method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_mail: user, song_id: songId })
     })
+  }
+
+  function goToStart() {
+    if (user) {
+      setPage('home')
+    } else {
+      setPage('landing')
+    }
   }
 
   function openTerms() {
@@ -76,7 +91,7 @@ export default function App() {
 
   if (page === 'terms') {
     return (
-      <Terms onReturn={() => setPage(termsFrom)} onLogo={() => setPage(user ? 'home' : 'landing')}></Terms>
+      <Terms onReturn={() => setPage(termsFrom)} onLogo={goToStart}></Terms>
     )
   }
 

@@ -65,7 +65,13 @@ export default function Auth({ startingMode, onReturn, onEnter, onTerms}) {
             }
             
         }
-    
+
+    let registerText = 'Crear cuenta'
+    let loginText = 'Iniciar sesión'
+    if (loading) {
+        registerText = 'Creando cuenta…'
+        loginText = 'Entrando…'
+    }
 
     if (mode === 'register') {
         return (
@@ -99,7 +105,7 @@ export default function Auth({ startingMode, onReturn, onEnter, onTerms}) {
                         </label>
                         <p className="flex h-5 items-center text-sm text-neutral-500">Al registrarte aceptas los <button type="button" onClick={onTerms} className="cursor-pointer text-neutral-900 underline px-1">Términos</button>.</p>
                         {error && <p className="text-sm text-red-500">{error}</p>}
-                        <button type="submit" disabled={loading} className={botonPrincipal}>{loading ? 'Creando cuenta…' : 'Crear cuenta'}</button>
+                        <button type="submit" disabled={loading} className={botonPrincipal}>{registerText}</button>
                     </form>
                     
                     <p className="mt-4 h-[18px] text-xs text-neutral-500">
@@ -145,7 +151,7 @@ export default function Auth({ startingMode, onReturn, onEnter, onTerms}) {
                         <div className="h-5" aria-hidden="true"></div>
                         <div className="h-[58px]" aria-hidden="true"></div>
                         {error && <p className="text-sm text-red-500">{error}</p>}
-                        <button type="submit" disabled={loading} className={botonPrincipal}>{loading ? 'Entrando…' : 'Iniciar sesión'}</button>
+                        <button type="submit" disabled={loading} className={botonPrincipal}>{loginText}</button>
                     </form>
                     
                     <p className="mt-4 h-[18px] text-xs text-neutral-500">

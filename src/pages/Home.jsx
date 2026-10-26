@@ -38,6 +38,20 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
         setPlaying(true);
     }
 
+    function isCurrent(song) {
+        if (currentSong) {
+            return currentSong.id === song.id;
+        }
+        return false;
+    }
+
+    function playsText(plays) {
+        if (plays === 1) {
+            return '1 reproducción';
+        }
+        return plays.toLocaleString('es-CL') + ' reproducciones';
+    }
+
     return (
         <div className="min-h-screen bg-white pb-24 text-sm text-neutral-900">
             <Navbar user={user} active="home" onLoad={onLoad}></Navbar>
@@ -64,18 +78,26 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, setCurrentSo
 
                 {section === 'busqueda' && songs.map((tmp) => {
                     const isLiked = likes.includes(String(tmp.id));
+                    let likeLabel = 'Agregar ' + tmp.title + ' a favoritos';
+                    let likeClass = 'cursor-pointer rounded-md p-1.5 hover:text-red-500';
+                    let likeFill = 'none';
+                    if (isLiked) {
+                        likeLabel = 'Quitar ' + tmp.title + ' de favoritos';
+                        likeClass = 'cursor-pointer rounded-md p-1.5 text-red-500';
+                        likeFill = 'currentColor';
+                    }
                     return (
-                        <SongRow key={tmp.id} song={tmp} subtitle={tmp.artist_name + ' · ' + tmp.album_name} active={currentSong?.id === tmp.id} onPlay={() => play(tmp)}>
-                        <button onClick={(e) => { e.stopPropagation(); onToggleLike(tmp.id) }} aria-label={(isLiked ? 'Quitar ' : 'Agregar ') + tmp.title + (isLiked ? ' de favoritos' : ' a favoritos')} aria-pressed={isLiked} className={'cursor-pointer rounded-md p-1.5 ' + (isLiked ? 'text-red-500' : 'hover:text-red-500')}><Heart size={16} fill={isLiked ? 'currentColor' : 'none'}></Heart></button>
+                        <SongRow key={tmp.id} song={tmp} subtitle={tmp.artist_name + ' · ' + tmp.album_name} active={isCurrent(tmp)} onPlay={() => play(tmp)}>
+                        <button onClick={(e) => { e.stopPropagation(); onToggleLike(tmp.id) }} aria-label={likeLabel} aria-pressed={isLiked} className={likeClass}><Heart size={16} fill={likeFill}></Heart></button>
                         </SongRow>);
                 })}
                 {section === 'tendencias' && trending.map((tmp) => (
-                    <SongRow key={tmp.id} song={tmp} active={currentSong?.id === tmp.id} onPlay={() => play(tmp)}>
-                        <div>{tmp.plays.toLocaleString('es-CL')} {tmp.plays === 1 ? 'reproducción' : 'reproducciones'}</div>
+                    <SongRow key={tmp.id} song={tmp} active={isCurrent(tmp)} onPlay={() => play(tmp)}>
+                        <div>{playsText(tmp.plays)}</div>
                     </SongRow>
                 ))}
                 {section === 'novedades' && newest.map((tmp) => (
-                    <SongRow key={tmp.id} song={tmp} active={currentSong?.id === tmp.id} onPlay={() => play(tmp)}>
+                    <SongRow key={tmp.id} song={tmp} active={isCurrent(tmp)} onPlay={() => play(tmp)}>
                         <div>{new Date(tmp.release_date + 'T00:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                     </SongRow>
                 ))}

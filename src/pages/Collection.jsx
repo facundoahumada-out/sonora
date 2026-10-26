@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import Navbar from "../components/Navbar"
 import Tabs from "../components/Tabs";
+import { toList, songCount } from "../utils";
 
 const sections = [
     { id: 'playlists', name: 'Playlists'},
@@ -17,13 +18,13 @@ export default function Collection ({ user, isAdmin, onLoad, currentSong, setPla
         if (!user) return;
         fetch(`http://localhost:3000/user/playlists/${user}`)
             .then(res => res.json())
-            .then(data => setPlaylists(Array.isArray(data) ? data : []))
+            .then(data => setPlaylists(toList(data)))
             .catch(() => setPlaylists([]));
 
 
         fetch('http://localhost:3000/songs')
             .then(res => res.json())
-            .then(data => setAllSongs(Array.isArray(data) ? data : []))
+            .then(data => setAllSongs(toList(data)))
             .catch(() => setAllSongs([]))   ;
     }, [user]);
 
@@ -40,7 +41,7 @@ export default function Collection ({ user, isAdmin, onLoad, currentSong, setPla
         if (res.ok) {
             fetch(`http://localhost:3000/user/playlists/${user}`)
                 .then(res => res.json())
-                .then(data => setPlaylists(Array.isArray(data) ? data : []));
+                .then(data => setPlaylists(toList(data)));
         }
     };
 
@@ -63,14 +64,15 @@ export default function Collection ({ user, isAdmin, onLoad, currentSong, setPla
                             </button>
                         </div>
 
-                        {playlists.length === 0 ? (
+                        {playlists.length === 0 && (
                             <p className="py-10 text-center text-neutral-400">Aún no tienes playlists.</p>
-                        ) : (
+                        )}
+                        {playlists.length > 0 && (
                             <div className="grid gap-3 sm:grid-cols-2">
                                 {playlists.map((pl) => (
                                     <div key={pl._id} className="rounded-lg border border-neutral-100 p-4 shadow-sm hover:border-neutral-200">
                                         <p className="font-medium">{pl.name}</p>
-                                        <p className="text-xs text-neutral-400">{pl.songs?.length || 0} canciones</p>
+                                        <p className="text-xs text-neutral-400">{songCount(pl)} canciones</p>
                                     </div>
                                 ))}
                             </div>
@@ -80,9 +82,10 @@ export default function Collection ({ user, isAdmin, onLoad, currentSong, setPla
 
                 {section === 'favoritos' && (
                     <div>
-                        {favoriteSongs.length === 0 ? (
+                        {favoriteSongs.length === 0 && (
                             <p className="py-10 text-center text-neutral-400">Aún no tienes canciones favoritas.</p>
-                        ) : (
+                        )}
+                        {favoriteSongs.length > 0 && (
                             <div className="flex flex-col gap-1">
                                 {favoriteSongs.map((song) => (
                                     <div 

@@ -22,9 +22,17 @@ export async function loadSongs(){
     console.log(`Se obtuvieron ${addedSongs.length} canciones de Jamendo`);
 
         for(const track of addedSongs){
+        let genres = undefined;
+        if (track.musicinfo && track.musicinfo.tags) {
+            genres = track.musicinfo.tags.genres;
+        }
+        let plays = 0;
+        if (track.stats && track.stats.rate_listened_total) {
+            plays = track.stats.rate_listened_total;
+        }
         await db.collection('songs').updateOne(
             { id: track.id },
-            { $set: {id: track.id, title: track.name, artist_name: track.artist_name, album_name: track.album_name, duration: track.duration, cover_image: track.image, audio_url: track.audio, genres: track.musicinfo?.tags?.genres, isActive: true, plays:track.stats?.rate_listened_total ||0, release_date: track.releasedate||null} },
+            { $set: {id: track.id, title: track.name, artist_name: track.artist_name, album_name: track.album_name, duration: track.duration, cover_image: track.image, audio_url: track.audio, genres: genres, isActive: true, plays: plays, release_date: track.releasedate||null} },
             { upsert: true }
         );
     }
