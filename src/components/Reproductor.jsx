@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, ListMusic, Volume2, VolumeX, Heart, ListPlus } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, ListMusic, Volume2, VolumeX, Heart, ListPlus } from "lucide-react";
 import SongCover from "./SongCover";
 import SongRow from "./SongRow";
 import { songCountText } from "../utils";
@@ -190,8 +190,7 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                             <input type="range" aria-label="Progreso de la canción" min="0" max={duration || 0} step="any" value={time} onChange={seek} disabled={!currentSong} className="h-1 flex-1 cursor-pointer accent-neutral-900 disabled:cursor-default" />
                             <span>{formatTime(duration)}</span>
                         </div>
-                        <div className="mt-4 flex items-center justify-between px-4">
-                            <button aria-label="Reproducción aleatoria" className="cursor-pointer text-neutral-400"><Shuffle size={14}></Shuffle></button>
+                        <div className="mt-4 flex items-center justify-center gap-10">
                             <button aria-label="Canción anterior" onClick={previous} disabled={!currentSong} className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"><SkipBack size={14} fill="currentColor"></SkipBack></button>
 
                             {playing && (
@@ -202,7 +201,6 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                             )}
 
                             <button aria-label="Canción siguiente" onClick={onNext} disabled={queueSongs.length === 0} className="cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"><SkipForward size={14} fill="currentColor"></SkipForward></button>
-                            <button aria-label="Repetir" className="cursor-pointer text-neutral-400"><Repeat size={14}></Repeat></button>
                         </div>
                     </div>
                 </div>
@@ -242,7 +240,6 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
 
                 <div className="hidden flex-[2] flex-col items-center gap-1 md:flex">
                     <div className="flex items-center gap-5">
-                        <button aria-label="Reproducción aleatoria" className="cursor-pointer text-neutral-400 hover:text-neutral-900"><Shuffle size={14}></Shuffle></button>
                         <button aria-label="Canción anterior" onClick={previous} disabled={!currentSong} className="cursor-pointer hover:text-neutral-600 disabled:cursor-not-allowed disabled:opacity-50"><SkipBack size={14} fill="currentColor"></SkipBack></button>
                         {playing && (
                             <button aria-label="Pausar" onClick={() => setPlaying(false)} className="cursor-pointer flex items-center justify-center"><Pause size={16} fill="currentColor"></Pause></button>
@@ -251,7 +248,6 @@ export default function Reproductor ({currentSong, playing, setPlaying, user, li
                             <button aria-label="Reproducir" onClick={() => setPlaying(true)} className="cursor-pointer flex items-center justify-center"><Play size={16} fill="currentColor"></Play></button>
                         )}
                         <button aria-label="Canción siguiente" onClick={onNext} disabled={queueSongs.length === 0} className="cursor-pointer hover:text-neutral-600 disabled:cursor-not-allowed disabled:opacity-50"><SkipForward size={14} fill="currentColor"></SkipForward></button>
-                        <button aria-label="Repetir" className="cursor-pointer text-neutral-400 hover:text-neutral-900"><Repeat size={14}></Repeat></button>
                     </div>
 
                     <div className="flex w-full max-w-[420px] items-center gap-2 text-[10px] text-neutral-400">

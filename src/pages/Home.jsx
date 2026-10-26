@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Heart, ListPlus, Play } from "lucide-react";
+import { Search, Heart } from "lucide-react";
 import Navbar from "../components/Navbar"
 import Tabs from "../components/Tabs";
 import SongRow from "../components/SongRow";
@@ -16,6 +16,7 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, onPlaySong, 
     const [songs, setSongs]= useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [query, setQuery] = useState('');
     useEffect(()=>{
         fetch('http://localhost:3000/songs')
         .then(res=> {
@@ -32,6 +33,21 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, onPlaySong, 
     
     const trending = [...songs].sort((a, b) => b.plays - a.plays).slice(0, 20);
     const newest = songs.filter((tmp) => tmp.release_date).sort((a, b) => b.release_date.localeCompare(a.release_date)).slice(0, 20);
+
+    const search = query.trim().toLowerCase();
+    const results = songs.filter((tmp) => {
+        let genres = '';
+        if (tmp.genres) {
+            genres = tmp.genres.join(' ');
+        }
+        const text = (tmp.title + ' ' + tmp.artist_name + ' ' + tmp.album_name + ' ' + genres).toLowerCase();
+        return text.includes(search);
+    });
+
+    function changeQuery(e) {
+        setQuery(e.target.value);
+        setSection('busqueda');
+    }
 
     const recent = [];
     for (const item of history) {
@@ -70,7 +86,7 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, onPlaySong, 
 
                 <label className="flex h-11 items-center gap-3 rounded-lg border border-neutral-200 px-3 focus-within:border-neutral-900">
                     <Search size={16} className="text-neutral-400"></Search>
-                    <input aria-label="Buscar canciones, álbumes, artistas o géneros" placeholder="Canciones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
+                    <input aria-label="Buscar canciones, álbumes, artistas o géneros" value={query} onChange={changeQuery} placeholder="Canciones, álbumes, artistas o géneros" className="flex-1 bg-transparent outline-none placeholder:text-neutral-400"></input>
                 </label>
 
                 <Tabs sections={sections} active={section} onChange={setSection} className="mt-7 mb-2"></Tabs>
@@ -85,7 +101,10 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, onPlaySong, 
                     <p className="py-10 text-center text-neutral-400">No hay canciones disponibles por ahora.</p>
                 )}
 
-                {section === 'busqueda' && songs.map((tmp) => {
+                {section === 'busqueda' && songs.length > 0 && results.length === 0 && (
+                    <p className="py-10 text-center text-neutral-400">No hay canciones que coincidan con "{query.trim()}".</p>
+                )}
+                {section === 'busqueda' && results.map((tmp) => {
                     const isLiked = likes.includes(String(tmp.id));
                     let likeLabel = 'Agregar ' + tmp.title + ' a favoritos';
                     let likeClass = 'cursor-pointer rounded-md p-1.5 hover:text-red-500';
@@ -96,7 +115,7 @@ export default function Home ({ user, isAdmin, onLoad, currentSong, onPlaySong, 
                         likeFill = 'currentColor';
                     }
                     return (
-                        <SongRow key={tmp.id} song={tmp} subtitle={tmp.artist_name + ' · ' + tmp.album_name} active={isCurrent(tmp)} onPlay={() => play(tmp, songs)}>
+                        <SongRow key={tmp.id} song={tmp} subtitle={tmp.artist_name + ' · ' + tmp.album_name} active={isCurrent(tmp)} onPlay={() => play(tmp, results)}>
                         <button onClick={(e) => { e.stopPropagation(); onToggleLike(tmp.id) }} aria-label={likeLabel} aria-pressed={isLiked} className={likeClass}><Heart size={16} fill={likeFill}></Heart></button>
                         </SongRow>);
                 })}
